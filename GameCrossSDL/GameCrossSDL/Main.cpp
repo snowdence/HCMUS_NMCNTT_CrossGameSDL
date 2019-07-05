@@ -2,7 +2,7 @@
 #include "GELibrary.h"
 #include "GC_Button.h"
 #include "GameController.h"
-
+#include "PlayGameScreen.h"
 #define GAME_FPS 60
 
 const int delay = 1000 / GAME_FPS;
@@ -32,14 +32,14 @@ int main(int argc, char* args[])
 	game.init();
 	while (game.state != EGameController::QUIT) {
 		//auto generated switch code
-		/*startLoop = GE::GE_GetTimerTick();
-		*/
+		startLoop = GE::GE_GetTimerTick();
+		
 
 		switch (game.state)
 		{
 		case EGameController::START:
 			if(game.screen == NULL){
-				game.screen = new StartGameScreen();
+				game.screen = new PlayGameScreen();
 			}
 			break;
 		case EGameController::PLAY:
@@ -74,11 +74,11 @@ int main(int argc, char* args[])
 			}
 		}
 		
-/*
+
 		endLoop = GE::GE_GetTimerTick() - startLoop;
 		if (endLoop < delay) {
 			GE::G_Delay(delay - endLoop);
-		}*/
+		}
 		
 		GE::GE_Update();
 	}
