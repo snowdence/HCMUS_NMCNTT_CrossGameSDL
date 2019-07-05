@@ -75,6 +75,7 @@ namespace GE {
 		else
 			SDL_RenderCopy(renderer, texture, src, 0);
 	}
+	
 	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, bool fullscreen = false)
 	{
 		if (!fullscreen)
@@ -82,6 +83,14 @@ namespace GE {
 		else
 			SDL_RenderCopy(renderer, texture, 0, 0);
 	}
+	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, SDL_RendererFlip flip, bool fullscreen = false)
+	{
+		if (!fullscreen)
+			SDL_RenderCopyEx(renderer, texture, 0, dst, 0, 0, flip);
+		else
+			SDL_RenderCopyEx(renderer, texture, 0, 0, 0, 0, flip);
+	}
+
 	int getCurrentEvent() {
 		if (SDL_PollEvent(&event) != 0)
 		{

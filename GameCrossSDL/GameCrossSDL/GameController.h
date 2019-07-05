@@ -91,7 +91,7 @@ protected:
 		SDL_Point mouse_point = { GE_Motion.x , GE_Motion.y };
 		int cur_event = GE::getCurrentEvent();
 		if (SDL_PointInRect(&mouse_point, r)) {
-			cout << "Click event on this " << mouse_point.x << ":" << mouse_point.y << endl;
+			cout << "Click event on [" << mouse_point.x << ":" << mouse_point.y << "]" << endl;
 			return true;
 		}
 		return false;

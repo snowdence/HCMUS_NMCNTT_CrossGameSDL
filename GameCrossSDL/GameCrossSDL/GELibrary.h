@@ -87,6 +87,9 @@ namespace GE {
 
 	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, bool fullscreen);
 
+	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, SDL_RendererFlip flip, bool fullscreen);
+
+	
 	int getCurrentEvent();
 
 	SDL_Point getMousePosition();
