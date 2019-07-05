@@ -32,8 +32,8 @@ int main(int argc, char* args[])
 	game.init();
 	while (game.state != EGameController::QUIT) {
 		//auto generated switch code
-		/*startLoop = GE::GE_GetTimerTick();
-		*/
+		//startLoop = GE::GE_GetTimerTick();
+		
 
 		switch (game.state)
 		{
@@ -74,12 +74,12 @@ int main(int argc, char* args[])
 			}
 		}
 		
-/*
-		endLoop = GE::GE_GetTimerTick() - startLoop;
+
+		/*endLoop = GE::GE_GetTimerTick() - startLoop;
 		if (endLoop < delay) {
 			GE::G_Delay(delay - endLoop);
-		}*/
-		
+		}
+		*/
 		GE::GE_Update();
 	}
 	GE::GE_Destroy();
