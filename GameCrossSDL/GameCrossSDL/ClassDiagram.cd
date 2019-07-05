@@ -45,7 +45,7 @@
   <Class Name="StartGameScreen" Collapsed="true">
     <Position X="3.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAIgAAAA=</HashCode>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAgAIgAIAA=</HashCode>
       <FileName>StartGameScreen.h</FileName>
     </TypeIdentifier>
   </Class>

@@ -2,8 +2,7 @@
 #include "GELibrary.h"
 #include "GC_Button.h"
 #include "GameController.h"
-#define GAME_WIDTH 1200
-#define GAME_HEIGHT 800
+
 #define GAME_FPS 60
 
 const int delay = 1000 / GAME_FPS;
@@ -25,7 +24,9 @@ int main(int argc, char* args[])
 		cout << "init ok" << endl;
 	}
 	window_rgb = { 255,255,255 };
-	window_rect = { SDL_WINDOWPOS_UNDEFINED , SDL_WINDOWPOS_UNDEFINED , 1200 ,800 };
+	GE::WINDOW_WIDTH = 1200;
+	GE::WINDOW_HEIGHT = 640;
+	window_rect = { SDL_WINDOWPOS_UNDEFINED , SDL_WINDOWPOS_UNDEFINED , GE::WINDOW_WIDTH ,GE::WINDOW_HEIGHT };
 	GE::GE_CreateWindow("Game crossing Snowdence", window_rect, window_rgb, 0); 
 	
 
