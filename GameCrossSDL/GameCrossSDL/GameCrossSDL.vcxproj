@@ -133,6 +133,7 @@
     <ClCompile Include="GC_Button.cpp" />
     <ClCompile Include="GELibrary.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="PlayerEntity.cpp" />
     <ClCompile Include="ScreenController.cpp" />
     <ClCompile Include="StartGameScreen.cpp" />
   </ItemGroup>
@@ -143,6 +144,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GC_Button.h" />
     <ClInclude Include="GELibrary.h" />
+    <ClInclude Include="PlayerEntity.h" />
     <ClInclude Include="ScreenController.h" />
     <ClInclude Include="StartGameScreen.h" />
   </ItemGroup>

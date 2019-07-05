@@ -89,4 +89,8 @@ namespace GE {
 		}
 		return 0;
 	}
+	SDL_Point getMousePosition() {
+		SDL_Point mouse_point = { GE_Motion.x , GE_Motion.y };
+		return mouse_point;
+	}
 }

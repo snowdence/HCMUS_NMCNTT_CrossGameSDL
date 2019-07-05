@@ -11,7 +11,7 @@ using namespace std;
 
 GE_RGB window_rgb;
 GE_Rect window_rect; 
-EGameController state;
+
 
 GameController game;
 
@@ -29,19 +29,18 @@ int main(int argc, char* args[])
 	window_rect = { SDL_WINDOWPOS_UNDEFINED , SDL_WINDOWPOS_UNDEFINED , GE::WINDOW_WIDTH ,GE::WINDOW_HEIGHT };
 	GE::GE_CreateWindow("Game crossing Snowdence", window_rect, window_rgb, 0); 
 	
-
-	game.screen = new StartGameScreen();
-	while (state != EGameController::QUIT) {
+	game.init();
+	while (game.state != EGameController::QUIT) {
 		//auto generated switch code
 		/*startLoop = GE::GE_GetTimerTick();
 		*/
-		
-		game.screen->Render();
 
-		switch (state)
+		switch (game.state)
 		{
 		case EGameController::START:
-
+			if(game.screen == NULL){
+				game.screen = new StartGameScreen();
+			}
 			break;
 		case EGameController::PLAY:
 			break;
@@ -60,15 +59,17 @@ int main(int argc, char* args[])
 		default:
 			break;
 		}
-
+		game.Render();
+		game.onPlayerListener();
 		if (SDL_PollEvent(&GE::event)) {
 			if (SDL_QUIT == GE::event.type) {
-				state = EGameController::QUIT;
+				game.state = EGameController::QUIT;
 				break;
 			}
 			else if (GE::event.type == GE_MOUSEBUTTONDOWN) {
 				
-				cout << "Button LEFT" << endl;
+				cout << "Button LEFT x="<< GE_Motion.x << "y=" << GE_Motion.y << endl;
+				
 				game.onClickEventListener();
 			}
 		}

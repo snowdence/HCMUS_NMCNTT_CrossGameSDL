@@ -15,8 +15,8 @@
 #define GE_BUTTON_X1       4
 #define GE_BUTTON_X2       5
 
-#define G_Keyboard GE::event.key.keysym.sym
-#define G_Mouse GE::event.button.button
+#define GE_Keyboard GE::event.key.keysym.sym
+#define GE_Mouse GE::event.button.button
 using namespace std;
 /*
 * Author 		: snowdence
@@ -31,7 +31,9 @@ using namespace std;
 
 typedef SDL_Rect GE_Rect; // rewrite type 
 typedef SDL_Texture GE_Texture; //rewrite Texture
-
+typedef TTF_Font GE_Font;
+typedef Mix_Music GE_Music;
+typedef Mix_Chunk GE_Sound;
 typedef struct GE_RGB {
 	//default white
 	uint8_t r = 255;
@@ -39,7 +41,22 @@ typedef struct GE_RGB {
 	uint8_t b = 255;
 };
 
+enum EKeyboardMotion{
+	GE_KEYDOWN = 0x300, /**< Key pressed */
+	GE_KEYUP,                  /**< Key released */
+	GE_TEXTEDITING,            /**< Keyboard text editing (composition) */
+	GE_TEXTINPUT,              /**< Keyboard text input */
+};
+enum Direction { UP, DOWN, LEFT, RIGHT };
+
 enum class EGameController { START, PLAY, PAUSE, CHOOSE_SKIN, SETTING, GAME_OVER, LEVEL_UP, QUIT };
+
+enum {
+	GEK_RIGHT = SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_RIGHT),
+	GEK_LEFT = SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_LEFT),
+	GEK_DOWN = SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_DOWN),
+	GEK_UP = SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_UP),
+};
 typedef enum EMouseMotion {
 	GE_MOUSEMOTION = 0x400, /**< Mouse moved */
 	GE_MOUSEBUTTONDOWN,        /**< Mouse button pressed */
@@ -71,6 +88,9 @@ namespace GE {
 	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, bool fullscreen);
 
 	int getCurrentEvent();
+
+	SDL_Point getMousePosition();
+
 	
 
 }

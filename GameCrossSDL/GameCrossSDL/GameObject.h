@@ -4,8 +4,14 @@
 
 class GameObject {
 public:
+
 	GE_Texture* textures; // text/img/... skin of this obj
 	GE_Rect rect; // rect 
+	GameObject() {
+
+	}
+	
+	
 	virtual void Render() {
 		GE::GE_RenderCopy(this->textures, &this->rect, false);
 	}
