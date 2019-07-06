@@ -90,7 +90,6 @@ public:
 			switch (GE_Keyboard)
 			{
 			case GEK_UP:
-
 				this->player->isMoving = true;
 				this->player->direction = UP;
 				break;
