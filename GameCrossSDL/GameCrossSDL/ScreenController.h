@@ -9,9 +9,19 @@ class ScreenController
 {
 protected:
 	GameComponent *background = NULL;
+	EGameController* state;
 public:
+	ScreenController() {
+
+	}
+	ScreenController(EGameController *_state ) {
+		state = _state;
+	}
 	~ScreenController() {
 		delete[] background;
+	}
+	virtual void update() {
+
 	}
 	void addBackGround(const char *path) {
 		background = new GameComponent();

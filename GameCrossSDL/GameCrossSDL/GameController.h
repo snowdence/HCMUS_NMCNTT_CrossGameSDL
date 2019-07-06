@@ -9,8 +9,11 @@
 class GameController
 {
 protected:
-	PlayerEntity *player;
+	
+
 public:
+	PlayerEntity* player;
+
 	EGameController state = EGameController::START;
 	ScreenController* screen = NULL;
 	GameController() {
@@ -22,30 +25,64 @@ public:
 	void init() {
 		player = new PlayerEntity();
 	}
+	void Update() {
+		if(screen != NULL){ 
+		screen->update();
+		}
+	}
+	/*
+	switch (Player->direction)
+		{
+		case UP:
+			if (Player->rect.y <= map[Player->point.x][Player->point.y - 1].position.y) {
+				Player->isMoving = false; 
+				Player->point.y--;
+				Player->rect.y = map[Player->point.x][Player->point.y].position.y;
+			}
+			break;
+		case DOWN:
+			if (Player->rect.x >= map[Player->point.x + 1][Player->point.y].position.x) {
+				Player->isMoving = false;
+				Player->point.x++;
+				Player->rect.x = map[Player->point.x][Player->point.y].position.x;
+			}
+			break;
+		case LEFT:
+			break;
+		case RIGHT:
+			break;
+
+		}*/
+	
 	void processPlayerListener() {
+	
 		if (this->player->isMoving) {
 			switch (this->player->direction)
 			{
 			case UP:
+				player->rect.y -= player->playerMoveSpeed;
 				player->isMoving = false;
-				player->rect.y -= player->dy;
 				break;
 			case DOWN:
 				player->isMoving = false;
+				player->point.y++;
 				player->rect.y += player->dy;
 				break;
 			case LEFT:
 				player->isMoving = false;
+				player->point.x--;
 				player->rect.x -= player->dx;
 				break;
 			case RIGHT:
 				player->isMoving = false;
+				player->point.x++;
 				player->rect.x += player->dx;
 				break;
 			}
 
 		}
 	}
+	
 
 	void onPlayerListener() {
 		processPlayerListener();
@@ -53,6 +90,7 @@ public:
 			switch (GE_Keyboard)
 			{
 			case GEK_UP:
+
 				this->player->isMoving = true;
 				this->player->direction = UP;
 				break;
