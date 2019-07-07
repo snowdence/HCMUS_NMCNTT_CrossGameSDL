@@ -112,7 +112,7 @@ public:
 	}
 	void Render() {
 		this->screen->Render();
-		this->player->Render();
+		//this->player->Render();
 	}
 	void onClickEventListener() {
 		for (int i = 0; i < screen->listOnClickListener.size(); i++)
