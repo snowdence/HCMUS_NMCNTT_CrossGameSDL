@@ -65,7 +65,7 @@ typedef enum EMouseMotion {
 };
 namespace GE {
 	static int WINDOW_WIDTH = 1200;
-	static int WINDOW_HEIGHT = 640;
+	static int WINDOW_HEIGHT = 800;
 	static SDL_Window* window = NULL;  //Window form
 	static SDL_Renderer* renderer = NULL; // Surface 
 	static SDL_Event event; //Eventd SDL 
@@ -83,11 +83,14 @@ namespace GE {
 
 	SDL_Texture* GE_LoadImage(const char* file);
 
-	void GE_RenderCopy(GE_Texture* texture, GE_Rect* src, GE_Rect* dst, bool fullscreen);
+	void GE_RenderCopy(GE_Texture* texture, GE_Rect* src, GE_Rect* dst, bool fullscreen = false);
 
-	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, bool fullscreen);
+	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, bool fullscreen = false);
 
-	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, SDL_RendererFlip flip, bool fullscreen);
+	void GE_RenderCopyEx(GE_Texture* texture, GE_Rect* src, GE_Rect* dst, SDL_RendererFlip flip, bool fullscreen = false);
+
+	void GE_RenderCopyEx(GE_Texture* texture, GE_Rect* dst, SDL_RendererFlip flip, bool fullscreen = false);
+
 
 	
 	int getCurrentEvent();

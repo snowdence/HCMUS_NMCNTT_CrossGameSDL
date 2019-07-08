@@ -5,109 +5,46 @@
 #include <ctime>
 #include <deque>
 #include "PlayerEntity.h"
+
+
 enum TileType { GRASS, WATER, ROAD, RAIL, TREE };
 
-struct Tile {
+typedef struct Tile {
 	TileType type;
-	GE_Rect position;
+	GE_Rect rect;
 	GE_Texture* texture;
 };
-class PlayGameScreen : public ScreenController
-{
-private:
-public:
 
-	GE_Texture* redLampTexture;
-	PlayerEntity* Player;
-	PlayGameScreen(EGameController *state, PlayerEntity *_player) : ScreenController(state){
-		this->Player = _player;
-		this->load();
-	}
-	GameEntity Stick;
-	GE_Texture* car2Texture;
-	GE_Texture* car3Texture;
-	deque<GameEntity> objects;
-	GameEntity Car;
-	Tile** map = NULL;
-	Tile grassTile, treeTile, waterTile, roadTile, railTile;
-	int columns = 0; 
-	int rows = 0;
+
+class GameMapBuilder {
+protected:
+	int columns;
+	int rows;
+	Tile** map;
 	const int TILE_LENGTH = 100;
-	const int playerMoveSpeed = 10;
-	const int maxTreesInARow = 2; //Choose it carefully! if it be great enough , Player stuck in trees!!!!
-	const int maxSticksInARow = 5;
-	const int minSticksInARow = 2;
-	const int maxCoinsInARow = 2;
-
-	void load() {
-		Car.textures = GE::GE_LoadImage("assets/image/car.png");
-		Car.rect = { 0,0,169,100 };
-		Car.isMoving = true;
-		Car.type = CAR;
-
-		car2Texture = GE::GE_LoadImage("assets/image/car2.png");
-		car3Texture = GE::GE_LoadImage("assets/image/car3.png");
-
-
-
-		waterTile.texture = GE::GE_LoadImage("assets/image/sea.png");
-		waterTile.position = { 0,0,100,100 };
-		waterTile.type = WATER;
-
-		roadTile.texture =  GE::GE_LoadImage("assets/image/street.png");
-		roadTile.position = { 0,0,100,100 };
-		roadTile.type = ROAD;
-
-		railTile.texture = GE::GE_LoadImage("assets/image/rail.png");
-		railTile.position = { 0,0,100,100 };
-		railTile.type = RAIL;
-
-		Stick.textures = GE::GE_LoadImage("assets/image/stick1.png");
-		Stick.rect = { 0,0,100,100 };
-		Stick.type = STICK;
-
-		grassTile.texture = GE::GE_LoadImage("assets/image/grass.png");
-		grassTile.position = { 0,0,100,100 };
-		grassTile.type = GRASS;
-
-		treeTile.texture = GE::GE_LoadImage("assets/image/tree.png");
-		treeTile.position = { 0,0,100,100 };
-		treeTile.type = TREE;
-
-		waterTile.texture = GE::GE_LoadImage("assets/image/sea.png");
-		waterTile.position = { 0,0,100,100 };
-		waterTile.type = WATER;
-
-
-		Lamp.textures = GE::GE_LoadImage("assets/image/green-lamp.png");
-		Lamp.rect = { 0,0,39,93 };
-		Lamp.type = LAMP;
-		redLampTexture = GE::GE_LoadImage("assets/image/red-lamp.png");
-
-		initTiles();
-
-	}
-
-	
-
-	void Render() {
-		this->draw();
-	}
-	void initTiles()
-	{
+	GE_Rect realPlayerClip = { 30,0,40,100 };
+	Tile grassTile, treeTile, waterTile, roadTile, railTile;
+	int maxTreesInARow = 2;
+	GameEntity Car, Stick, Train, Lamp, Eagle, Coin;
+	deque < GameEntity>objects;
+	GE_Texture* car2Texture, * car3Texture;
+	int maxSticksInARow = 3;  int minSticksInARow = 1;
+	int FPS = 60;
+public:
+	GameMapBuilder() {
 		columns = ceil(GE::WINDOW_WIDTH / TILE_LENGTH);
 		rows = ceil(GE::WINDOW_HEIGHT / TILE_LENGTH) + 1;
 		map = new Tile * [columns];
 		for (int i = 0; i < columns; i++)
 			map[i] = new Tile[rows];
-
+		load();
 		for (int y = rows - 1; y >= 0; y--)
 		{
 			if (y >= rows - 2) {
 				for (int x = 0; x < columns; x++) {
 					map[x][y] = (x == 0 || x == columns - 1) ? treeTile : grassTile;
-					map[x][y].position.x = x * 100;
-					map[x][y].position.y = (y - 1) * 100;
+					map[x][y].rect.x = x * 100;
+					map[x][y].rect.y = (y - 1) * 100;
 				}
 			}
 			else
@@ -117,181 +54,34 @@ public:
 			}
 		}
 	}
-	GE_Rect realPlayerClip = { 10,0,40,100 };
 
-	void checkPlayerStatus() {
-		//if (*state != EGameController::PLAY) return;
-
-		if (Player->rect.y + 5 >=GE::WINDOW_HEIGHT) {
-			*state = EGameController::OUT ;
-			cout << "Out of range" << endl;
-			return;
-		}
-
-		if (Player->rect.x <= -TILE_LENGTH || Player->rect.x >= GE::WINDOW_WIDTH)
-			*state = EGameController::GAME_OVER;
-
-		bool onStick = false;
-		GE_Rect temp = { Player->rect.x + realPlayerClip.x + 5 , Player->rect.y + realPlayerClip.y + 5 , realPlayerClip.w - 5,realPlayerClip.h - 5 };
-		for (int i = 0; i < objects.size(); i++) {
-			if (SDL_HasIntersection(&temp, &objects[i].rect) == SDL_TRUE) {
-				if (objects[i].type == CAR || objects[i].type == TRAIN) {
-					*state = EGameController::GAME_OVER;
-					//G_PlaySound(Player->sound, 0);
-				}
-				else if (objects[i].type == STICK) {
-					onStick = true;
-					if (!Player->isMoving) {
-						if (objects[i].isMoving) Player->rect.x += objects[i].moveSpeed;
-						if (Player->rect.x >= map[Player->point.x][0].position.x + TILE_LENGTH) Player->point.x++;
-						else if (Player->rect.x <= map[Player->point.x][0].position.x - TILE_LENGTH) Player->point.x--;
-						if (Player->point.x >= columns || Player->point.x < 0) *state = EGameController::GAME_OVER;
-					}
-				}
-				else if (objects[i].type == COIN) {
-					/*
-					coins++;
-					G_PlaySound(Coin.sound, 0);
-					updateScore();
-					objects.erase(objects.begin() + i);
-					i--;
-					*/
-					continue;
-				}
-			}
-		}
-		
-		if (!Player->isMoving && !onStick && map[Player->point.x][Player->point.y].type == WATER)
-			*state = EGameController::GAME_OVER;
-	//	cout << "Current Map :" << map[Player->point.x][Player->point.y].type <<endl;
-	}
-	int cameraBaseSpeed = 1;
-	int cameraSpeed = 1; 
-	void adjustCameraSpeed()
+	void drawTiles()
 	{
-		if (*state == EGameController::OUT) {
-			cameraSpeed = -2;
-			return;
-		}
-		if (*state != EGameController::PLAY) {
-			cameraSpeed = 0;
-			return;
-		}
-		cameraSpeed = cameraBaseSpeed;
-		switch (Player->point.y) {
-		case 4:
-			cameraSpeed += 1;
-			break;
-		case 3:
-			cameraSpeed += 3;
-			break;
-		case 2:
-			cameraSpeed += 6;
-			break;
-		case 1:
-			cameraSpeed = playerMoveSpeed;
-			break;
+		for (int i = 0; i < columns; i++)
+		{
+			for (int j = 0; j < rows; j++)
+			{
+				GE::GE_RenderCopy(map[i][j].texture, &map[i][j].rect);
+			}
 		}
 	}
 
-	void update()
+	void drawObjects()
 	{
-		
-		int trainMoveSpeed = 10;
-		int FPS = 60;
-		
-		adjustCameraSpeed();
-
-		//for (int y = 0; y < rows; y++)
-		//	for (int x = 0; x < columns; x++)
-		//		map[x][y].position.y += cameraspeed; //cameraspeed
-
-		for (int i = 0; i < objects.size(); i++) {
-			objects[i].rect.y += cameraSpeed;
-			if (objects[i].type == CAR) {
-				if (objects[i].direction == LEFT && objects[i].rect.x < -Car.rect.w) {
-					objects[i].rect.x = GE::WINDOW_WIDTH;
-				}
-				else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH) {
-					objects[i].rect.x = -Car.rect.w;
-				}
-			}
-
-			if (objects[i].type == STICK) {
-				if (objects[i].direction == LEFT && objects[i].rect.x < -Stick.rect.w)
-					objects[i].rect.x = GE::WINDOW_WIDTH;
-				else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH)
-					objects[i].rect.x = -Stick.rect.w;
-			}
-
-			if (objects[i].type == TRAIN) {
-				if (objects[i].isMoving) {
-					if (objects[i].direction == LEFT && objects[i].rect.x < -Train.rect.w) {
-						objects[i].rect.x = GE::WINDOW_WIDTH;
-						objects[i].isMoving = false;
-						objects[i + 1].textures = Lamp.textures; // We Are Sure there is a lamp just after a train!!
-						objects[i].timer = ((rand() % 5) + 2) * FPS;
-					}
-					else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH) {
-						objects[i].rect.x = -Train.rect.w;
-						objects[i].isMoving = false;
-						objects[i + 1].textures = Lamp.textures;
-						objects[i].timer = ((rand() % 5) + 2) * FPS;
-					}
-				}
-				else {
-					if (objects[i].timer == FPS) {  //1 Second Before it move we should change the lamp!!
-						objects[i + 1].textures = redLampTexture;
-						//G_PlaySound(Lamp.sound, 0);
-					}
-					if (objects[i].timer == 0) {
-						objects[i].isMoving = true;
-						//G_PlaySound(Train.sound, 0);
-					}
-					else
-						objects[i].timer--;
-				}
-			}
-
-			if (objects[i].isMoving) {
-				if (objects[i].type == TRAIN)
-					objects[i].rect.x += (objects[i].direction == LEFT ? -trainMoveSpeed : trainMoveSpeed);
-				else
-					objects[i].rect.x += objects[i].moveSpeed;
-			}
-		}
-
-		if (map[0][rows - 1].position.y > GE::WINDOW_HEIGHT) {
-			for (int y = rows - 1; y > 0; y--)
-				for (int x = 0; x < columns; x++)
-					map[x][y] = map[x][y - 1];
-
-			generateTiles(0);
-			deleteObjects();
-
-			for (int i = 0; i < objects.size(); i++)
-				objects[i].point.y += 1;
-			addObjects(0);
-			Player->point.y += 1;
-		}
-		Player->rect.y += cameraSpeed;
-
-		checkPlayerStatus();
-	}
-
-	void deleteObjects()
-	{
-		while (!objects.empty() && objects.front().point.y == rows - 1) {
-			objects.pop_front();
+		for (int i = 0; i < objects.size(); i++)
+		{
+			if (objects[i].direction == LEFT)
+				GE::GE_RenderCopy(objects[i].texture, &objects[i].rect);
+			else
+				GE::GE_RenderCopyEx(objects[i].texture, &objects[i].rect, SDL_FLIP_HORIZONTAL);
 		}
 	}
-
 
 
 	void generateTiles(int row)
 	{
 		TileType rowType = (TileType)(rand() % 4);
-		int rowChance = rand() % 100 + 1; 
+		int rowChance = rand() % 100 + 1;
 		int Trees = 0;
 		for (int x = 0; x < columns; x++)
 		{
@@ -319,13 +109,14 @@ public:
 				map[x][row] = waterTile;
 			}
 
-			map[x][row].position.x = x * 100;
-			map[x][row].position.y = map[x][row + 1].position.y - TILE_LENGTH;
+			map[x][row].rect.x = x * 100;
+			map[x][row].rect.y = map[x][row + 1].rect.y - TILE_LENGTH;
 		}
 	}
+
 	void addObjects(int row)
 	{
-		//if (map[0][row].type != WATER) addCoins(row);
+		if (map[0][row].type != WATER) addCoins(row);
 		switch (map[0][row].type)
 		{
 		case ROAD:
@@ -335,34 +126,15 @@ public:
 			addStick(row);
 			break;
 		case RAIL:
-			addCar(row);
+			addTrain(row);
 			break;
 		}
 	}
-	GameEntity Train;
-	GameEntity Lamp;
-	void addTrain(int row) {
-		Direction dir = (Direction)((rand() % 2) + 2);
-		Train.direction = dir;
-		Train.rect.y = map[0][row].position.y;
-		Train.point.y = row;
-		Train.timer = ((rand() % 5) + 2) * 60;
 
-		objects.push_back(Train);
-		if (dir == LEFT)
-			objects.back().rect.x = GE::WINDOW_WIDTH + Train.rect.w;
-		else
-			objects.back().rect.x = -Train.rect.w;
-
-		Lamp.point.y = row;
-		Lamp.rect.y = map[0][row].position.y + TILE_LENGTH - Lamp.rect.h;
-		Lamp.rect.x = map[0][row].position.x + 20;
-		objects.push_back(Lamp);
-	}
 	void addCar(int row) {
 		Direction dir = (Direction)((rand() % 2) + 2);
 		Car.direction = dir;
-		Car.rect.y = map[0][row].position.y;
+		Car.rect.y = map[0][row].rect.y;
 		Car.point.y = row;
 		Car.moveSpeed = (rand() % 5 + 2) * (dir == RIGHT ? 1 : -1);
 		int num = (rand() % 3) + 1;
@@ -379,17 +151,17 @@ public:
 			switch (tex)
 			{
 			case 1:
-				objects.back().textures = car2Texture;
+				objects.back().texture = car2Texture;
 				break;
 			case 2:
-				objects.back().textures = car3Texture;
+				objects.back().texture = car3Texture;
 				break;
 			}
 		}
 	}
 	void addStick(int row)
 	{
-		Stick.rect.y = map[0][row].position.y;
+		Stick.rect.y = map[0][row].rect.y;
 		Stick.point.y = row;
 		if (map[0][row + 1].type == WATER) { // Direction of two rivers should be diffrent.
 			for (int i = objects.size() - 1; i >= 0; i--) {
@@ -429,7 +201,7 @@ public:
 						int chance = rand() % 100 + 1;
 						if (chance >= 50 && num < maxSticksInARow) {
 							num++;
-							Stick.rect.x = map[i][row].position.x;
+							Stick.rect.x = map[i][row].rect.x;
 							objects.push_back(Stick);
 						}
 					}
@@ -437,34 +209,124 @@ public:
 			} while (num < minSticksInARow);
 		}
 	}
-	
-	void drawTiles()
-	{
+
+	void addTrain(int row) {
+		Direction dir = (Direction)((rand() % 2) + 2);
+		Train.direction = dir;
+		Train.rect.y = map[0][row].rect.y;
+		Train.point.y = row;
+		Train.timer = ((rand() % 5) + 2) * FPS;
+
+		objects.push_back(Train);
+		if (dir == LEFT)
+			objects.back().rect.x = GE::WINDOW_WIDTH + Train.rect.w;
+		else
+			objects.back().rect.x = -Train.rect.w;
+
+		Lamp.point.y = row;
+		Lamp.rect.y = map[0][row].rect.y + TILE_LENGTH - Lamp.rect.h;
+		Lamp.rect.x = map[0][row].rect.x + 20;
+		objects.push_back(Lamp);
+	}
+
+	void addCoins(int row) {
+		int maxCoinsInARow = 3;
+		int num = 0;
+		Coin.rect.y = map[0][row].rect.y;
+		Coin.rect.w = Coin.rect.h = 100;
+		Coin.point.y = row;
 		for (int i = 0; i < columns; i++)
 		{
-			for (int j = 0; j < rows; j++)
-			{
-				GE::GE_RenderCopy(map[i][j].texture, &map[i][j].position, false);
+			if (map[i][row].type != TREE) {
+				int chance = rand() % 101;
+				if (chance >= 90 && num < maxCoinsInARow) {
+					num++;
+					Coin.rect.x = map[i][row].rect.x;
+					objects.push_back(Coin);
+				}
 			}
 		}
 	}
-	void drawObjects()
+
+	void deleteObjects()
 	{
-		for (int i = 0; i < objects.size(); i++)
-		{
-			if (objects[i].direction == LEFT)
-				GE::GE_RenderCopy(objects[i].textures, &(objects[i].rect), false);
-			else
-				GE::GE_RenderCopy(objects[i].textures, &objects[i].rect, SDL_FLIP_HORIZONTAL, false);
-			cout << "DRaw" << objects[i].type << endl;
+		while (!objects.empty() && objects.front().point.y == rows - 1) {
+			objects.pop_front();
 		}
 	}
 
-	void draw() {
+	void draw()
+	{
 		drawTiles();
 		drawObjects();
+	}
+
+
+	void load() {
+		grassTile.texture = GE::GE_LoadImage("assets/image/grass.png");
+		grassTile.rect = { 0,0,100,100 };
+		grassTile.type = GRASS;
+
+		treeTile.texture = GE::GE_LoadImage("assets/image/tree.png");
+		treeTile.rect = { 0,0,100,100 };
+		treeTile.type = TREE;
+
+		waterTile.texture = GE::GE_LoadImage("assets/image/sea.png");
+		waterTile.rect = { 0,0,100,100 };
+		waterTile.type = WATER;
+
+		roadTile.texture = GE::GE_LoadImage("assets/image/street.png");
+		roadTile.rect = { 0,0,100,100 };
+		roadTile.type = ROAD;
+
+		railTile.texture = GE::GE_LoadImage("assets/image/rail.png");
+		railTile.rect = { 0,0,100,100 };
+		railTile.type = RAIL;
+
+
+		Car.texture = GE::GE_LoadImage("assets/image/car.png");
+		Car.rect = { 0,0,169,100 };
+		Car.isMoving = true;
+		Car.type = CAR;
+
+		car2Texture = GE::GE_LoadImage("assets/image/car2.png");
+		car3Texture = GE::GE_LoadImage("assets/image/car3.png");
+
+		Stick.texture = GE::GE_LoadImage("assets/image/stick1.png");
+		Stick.rect = { 0,0,100,100 };
+		Stick.type = STICK;
+
+		Train.texture = GE::GE_LoadImage("assets/image/train.png");
+		Train.rect = { 0,0,544,100 };
+		Train.type = TRAIN;
+
+		Lamp.texture = GE::GE_LoadImage("assets/image/green-lamp.png");
+		Lamp.rect = { 0,0,39,93 };
+		Lamp.type = LAMP;
+
+		Eagle.texture = GE::GE_LoadImage("assets/image/eagle.png");
+		Eagle.rect = { 0,0,426,184 };
+		Eagle.type = EAGLE;
+		Eagle.moveSpeed = 20;
+
+		Coin.texture = GE::GE_LoadImage("assets/image/coin.png");
+		Coin.rect = { GE::WINDOW_WIDTH - 100,20,100,100 };
+		Coin.direction = LEFT;
+		Coin.type = COIN;
+
 
 	}
-	
-};
 
+};
+class PlayGameScreen : public ScreenController {
+public:
+	GameMapBuilder mapbuilder;
+	PlayGameScreen() {
+		
+	}
+	void Render() {
+		mapbuilder.draw();
+	}
+private:
+
+};

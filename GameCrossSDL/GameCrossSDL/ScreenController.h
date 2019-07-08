@@ -18,19 +18,21 @@ public:
 		state = _state;
 	}
 	~ScreenController() {
-		delete[] background;
+		if (background != nullptr) {
+			delete[] background;
+		}
 	}
 	virtual void update() {
 
 	}
 	void addBackGround(const char *path) {
 		background = new GameComponent();
-		background->textures = GE::GE_LoadImage(path);
+		background->texture = GE::GE_LoadImage(path);
 		background->rect = { 0,0, GE::WINDOW_WIDTH, GE::WINDOW_HEIGHT };
 
 	}
 	virtual void Render() {
-		if (background != NULL) {
+		if (background != nullptr) {
 			this->background->Render();
 		}
 	}

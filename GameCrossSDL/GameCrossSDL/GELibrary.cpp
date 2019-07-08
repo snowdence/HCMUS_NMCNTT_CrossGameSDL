@@ -67,29 +67,36 @@ namespace GE {
 
 		return nullptr;
 	}
-
-	void GE_RenderCopy(GE_Texture* texture, GE_Rect* src, GE_Rect* dst, bool fullscreen = false)
+	void GE_RenderCopy(GE_Texture* texture, GE_Rect* src, GE_Rect* dst, bool fullscreen)
 	{
 		if (!fullscreen)
 			SDL_RenderCopy(renderer, texture, src, dst);
 		else
 			SDL_RenderCopy(renderer, texture, src, 0);
 	}
-	
-	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, bool fullscreen = false)
+	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, bool fullscreen )
 	{
 		if (!fullscreen)
 			SDL_RenderCopy(renderer, texture, 0, dst);
 		else
 			SDL_RenderCopy(renderer, texture, 0, 0);
 	}
-	void GE_RenderCopy(GE_Texture* texture, GE_Rect* dst, SDL_RendererFlip flip, bool fullscreen = false)
+	void GE_RenderCopyEx(GE_Texture* texture, GE_Rect* src, GE_Rect* dst, SDL_RendererFlip flip, bool fullscreen )
+	{
+		if (!fullscreen)
+			SDL_RenderCopyEx(renderer, texture, src, dst, 0, 0, flip);
+		else
+			SDL_RenderCopyEx(renderer, texture, src, 0, 0, 0, flip);
+	}
+	void GE_RenderCopyEx(GE_Texture* texture, GE_Rect* dst, SDL_RendererFlip flip, bool fullscreen )
 	{
 		if (!fullscreen)
 			SDL_RenderCopyEx(renderer, texture, 0, dst, 0, 0, flip);
 		else
 			SDL_RenderCopyEx(renderer, texture, 0, 0, 0, 0, flip);
 	}
+
+
 
 	int getCurrentEvent() {
 		if (SDL_PollEvent(&event) != 0)

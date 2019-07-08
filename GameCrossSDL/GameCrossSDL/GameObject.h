@@ -5,7 +5,7 @@
 class GameObject {
 public:
 
-	GE_Texture* textures; // text/img/... skin of this obj
+	GE_Texture* texture; // text/img/... skin of this obj
 	GE_Rect rect; // rect 
 	GameObject() {
 
@@ -13,7 +13,7 @@ public:
 	
 	
 	virtual void Render() {
-		GE::GE_RenderCopy(this->textures, &this->rect, false);
+		GE::GE_RenderCopy(this->texture, &this->rect, false);
 	}
 	virtual void OnClick() {
 		cout << "Onclick involked" << endl;

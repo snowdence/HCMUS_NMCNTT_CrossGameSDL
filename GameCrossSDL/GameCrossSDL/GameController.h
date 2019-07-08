@@ -5,6 +5,7 @@
 #include <vector>
 #include "ScreenController.h"
 #include "StartGameScreen.h"
+#include "PlayGameScreen.h"
 #include "PlayerEntity.h"
 class GameController
 {
@@ -15,104 +16,22 @@ public:
 	PlayerEntity* player;
 
 	EGameController state = EGameController::START;
-	ScreenController* screen = NULL;
+	ScreenController* screen = nullptr;
 	GameController() {
-		 
+		//init();
 	}
 	~GameController() {
+		delete[] player;
 		delete[] screen;
 	}
-	void init() {
-		player = new PlayerEntity();
-	}
-	void Update() {
-		if(screen != NULL){ 
-		screen->update();
+	void playGame() {
+		//cout << "Play Game" << endl;
+		if(screen == nullptr){
+			screen = new PlayGameScreen();
 		}
 	}
-	/*
-	switch (Player->direction)
-		{
-		case UP:
-			if (Player->rect.y <= map[Player->point.x][Player->point.y - 1].position.y) {
-				Player->isMoving = false; 
-				Player->point.y--;
-				Player->rect.y = map[Player->point.x][Player->point.y].position.y;
-			}
-			break;
-		case DOWN:
-			if (Player->rect.x >= map[Player->point.x + 1][Player->point.y].position.x) {
-				Player->isMoving = false;
-				Player->point.x++;
-				Player->rect.x = map[Player->point.x][Player->point.y].position.x;
-			}
-			break;
-		case LEFT:
-			break;
-		case RIGHT:
-			break;
-
-		}*/
-	
-	void processPlayerListener() {
-	
-		if (this->player->isMoving) {
-			switch (this->player->direction)
-			{
-			case UP:
-				player->rect.y -= player->playerMoveSpeed;
-				player->isMoving = false;
-				break;
-			case DOWN:
-				player->isMoving = false;
-				player->point.y++;
-				player->rect.y += player->dy;
-				break;
-			case LEFT:
-				player->isMoving = false;
-				player->point.x--;
-				player->rect.x -= player->dx;
-				break;
-			case RIGHT:
-				player->isMoving = false;
-				player->point.x++;
-				player->rect.x += player->dx;
-				break;
-			}
-
-		}
-	}
-	
-
-	void onPlayerListener() {
-		processPlayerListener();
-		if ( GE::event.type == GE_KEYDOWN && !this->player->isMoving) {
-			switch (GE_Keyboard)
-			{
-			case GEK_UP:
-				this->player->isMoving = true;
-				this->player->direction = UP;
-				break;
-			case GEK_DOWN:
-				this->player->isMoving = true;
-				this->player->direction = DOWN;
-				break;
-			case GEK_RIGHT:
-				this->player->isMoving = true;
-				this->player->direction = RIGHT;
-				break;
-			case GEK_LEFT:
-				this->player->isMoving = true;
-				this->player->direction = LEFT;
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	void Render() {
-		this->screen->Render();
-		//this->player->Render();
+	void RenderScreen() {
+		screen->Render();
 	}
 	void onClickEventListener() {
 		for (int i = 0; i < screen->listOnClickListener.size(); i++)
@@ -134,4 +53,3 @@ protected:
 		return false;
 	}
 };
-
