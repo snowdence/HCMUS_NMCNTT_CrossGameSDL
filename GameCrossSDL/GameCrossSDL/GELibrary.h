@@ -49,7 +49,7 @@ enum EKeyboardMotion{
 };
 enum Direction { UP, DOWN, LEFT, RIGHT };
 
-enum class EGameController { START, PLAY, PAUSE, CHOOSE_SKIN, SETTING, GAME_OVER, LEVEL_UP, QUIT };
+enum class EGameController { START, PLAY, PAUSE, CHOOSE_SKIN, SETTING, GAME_OVER, LEVEL_UP, QUIT  , OUT};
 
 enum {
 	GEK_RIGHT = SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_RIGHT),

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <deque>
+#include "PlayerEntity.h"
 enum TileType { GRASS, WATER, ROAD, RAIL, TREE };
 
 struct Tile {
@@ -15,11 +16,12 @@ class PlayGameScreen : public ScreenController
 {
 private:
 public:
-	GE_Texture* redLampTexture;
 
-	PlayGameScreen() {
+	GE_Texture* redLampTexture;
+	PlayerEntity* Player;
+	PlayGameScreen(EGameController *state, PlayerEntity *_player) : ScreenController(state){
+		this->Player = _player;
 		this->load();
-		
 	}
 	GameEntity Stick;
 	GE_Texture* car2Texture;
@@ -115,10 +117,181 @@ public:
 			}
 		}
 	}
+	GE_Rect realPlayerClip = { 10,0,40,100 };
+
+	void checkPlayerStatus() {
+		//if (*state != EGameController::PLAY) return;
+
+		if (Player->rect.y + 5 >=GE::WINDOW_HEIGHT) {
+			*state = EGameController::OUT ;
+			cout << "Out of range" << endl;
+			return;
+		}
+
+		if (Player->rect.x <= -TILE_LENGTH || Player->rect.x >= GE::WINDOW_WIDTH)
+			*state = EGameController::GAME_OVER;
+
+		bool onStick = false;
+		GE_Rect temp = { Player->rect.x + realPlayerClip.x + 5 , Player->rect.y + realPlayerClip.y + 5 , realPlayerClip.w - 5,realPlayerClip.h - 5 };
+		for (int i = 0; i < objects.size(); i++) {
+			if (SDL_HasIntersection(&temp, &objects[i].rect) == SDL_TRUE) {
+				if (objects[i].type == CAR || objects[i].type == TRAIN) {
+					*state = EGameController::GAME_OVER;
+					//G_PlaySound(Player->sound, 0);
+				}
+				else if (objects[i].type == STICK) {
+					onStick = true;
+					if (!Player->isMoving) {
+						if (objects[i].isMoving) Player->rect.x += objects[i].moveSpeed;
+						if (Player->rect.x >= map[Player->point.x][0].position.x + TILE_LENGTH) Player->point.x++;
+						else if (Player->rect.x <= map[Player->point.x][0].position.x - TILE_LENGTH) Player->point.x--;
+						if (Player->point.x >= columns || Player->point.x < 0) *state = EGameController::GAME_OVER;
+					}
+				}
+				else if (objects[i].type == COIN) {
+					/*
+					coins++;
+					G_PlaySound(Coin.sound, 0);
+					updateScore();
+					objects.erase(objects.begin() + i);
+					i--;
+					*/
+					continue;
+				}
+			}
+		}
+		
+		if (!Player->isMoving && !onStick && map[Player->point.x][Player->point.y].type == WATER)
+			*state = EGameController::GAME_OVER;
+	//	cout << "Current Map :" << map[Player->point.x][Player->point.y].type <<endl;
+	}
+	int cameraBaseSpeed = 1;
+	int cameraSpeed = 1; 
+	void adjustCameraSpeed()
+	{
+		if (*state == EGameController::OUT) {
+			cameraSpeed = -2;
+			return;
+		}
+		if (*state != EGameController::PLAY) {
+			cameraSpeed = 0;
+			return;
+		}
+		cameraSpeed = cameraBaseSpeed;
+		switch (Player->point.y) {
+		case 4:
+			cameraSpeed += 1;
+			break;
+		case 3:
+			cameraSpeed += 3;
+			break;
+		case 2:
+			cameraSpeed += 6;
+			break;
+		case 1:
+			cameraSpeed = playerMoveSpeed;
+			break;
+		}
+	}
+
+	void update()
+	{
+		
+		int trainMoveSpeed = 10;
+		int FPS = 60;
+		
+		adjustCameraSpeed();
+
+		//for (int y = 0; y < rows; y++)
+		//	for (int x = 0; x < columns; x++)
+		//		map[x][y].position.y += cameraspeed; //cameraspeed
+
+		for (int i = 0; i < objects.size(); i++) {
+			objects[i].rect.y += cameraSpeed;
+			if (objects[i].type == CAR) {
+				if (objects[i].direction == LEFT && objects[i].rect.x < -Car.rect.w) {
+					objects[i].rect.x = GE::WINDOW_WIDTH;
+				}
+				else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH) {
+					objects[i].rect.x = -Car.rect.w;
+				}
+			}
+
+			if (objects[i].type == STICK) {
+				if (objects[i].direction == LEFT && objects[i].rect.x < -Stick.rect.w)
+					objects[i].rect.x = GE::WINDOW_WIDTH;
+				else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH)
+					objects[i].rect.x = -Stick.rect.w;
+			}
+
+			if (objects[i].type == TRAIN) {
+				if (objects[i].isMoving) {
+					if (objects[i].direction == LEFT && objects[i].rect.x < -Train.rect.w) {
+						objects[i].rect.x = GE::WINDOW_WIDTH;
+						objects[i].isMoving = false;
+						objects[i + 1].textures = Lamp.textures; // We Are Sure there is a lamp just after a train!!
+						objects[i].timer = ((rand() % 5) + 2) * FPS;
+					}
+					else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH) {
+						objects[i].rect.x = -Train.rect.w;
+						objects[i].isMoving = false;
+						objects[i + 1].textures = Lamp.textures;
+						objects[i].timer = ((rand() % 5) + 2) * FPS;
+					}
+				}
+				else {
+					if (objects[i].timer == FPS) {  //1 Second Before it move we should change the lamp!!
+						objects[i + 1].textures = redLampTexture;
+						//G_PlaySound(Lamp.sound, 0);
+					}
+					if (objects[i].timer == 0) {
+						objects[i].isMoving = true;
+						//G_PlaySound(Train.sound, 0);
+					}
+					else
+						objects[i].timer--;
+				}
+			}
+
+			if (objects[i].isMoving) {
+				if (objects[i].type == TRAIN)
+					objects[i].rect.x += (objects[i].direction == LEFT ? -trainMoveSpeed : trainMoveSpeed);
+				else
+					objects[i].rect.x += objects[i].moveSpeed;
+			}
+		}
+
+		if (map[0][rows - 1].position.y > GE::WINDOW_HEIGHT) {
+			for (int y = rows - 1; y > 0; y--)
+				for (int x = 0; x < columns; x++)
+					map[x][y] = map[x][y - 1];
+
+			generateTiles(0);
+			deleteObjects();
+
+			for (int i = 0; i < objects.size(); i++)
+				objects[i].point.y += 1;
+			addObjects(0);
+			Player->point.y += 1;
+		}
+		Player->rect.y += cameraSpeed;
+
+		checkPlayerStatus();
+	}
+
+	void deleteObjects()
+	{
+		while (!objects.empty() && objects.front().point.y == rows - 1) {
+			objects.pop_front();
+		}
+	}
+
+
+
 	void generateTiles(int row)
 	{
 		TileType rowType = (TileType)(rand() % 4);
-		int rowChance = rand() % 100 + 1;
+		int rowChance = rand() % 100 + 1; 
 		int Trees = 0;
 		for (int x = 0; x < columns; x++)
 		{
@@ -271,7 +444,7 @@ public:
 		{
 			for (int j = 0; j < rows; j++)
 			{
-				GE::GE_RenderCopy(map[i][j].texture, &map[i][j].position, 0);
+				GE::GE_RenderCopy(map[i][j].texture, &map[i][j].position, false);
 			}
 		}
 	}
@@ -283,6 +456,7 @@ public:
 				GE::GE_RenderCopy(objects[i].textures, &(objects[i].rect), false);
 			else
 				GE::GE_RenderCopy(objects[i].textures, &objects[i].rect, SDL_FLIP_HORIZONTAL, false);
+			cout << "DRaw" << objects[i].type << endl;
 		}
 	}
 

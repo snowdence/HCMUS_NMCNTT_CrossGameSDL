@@ -33,28 +33,35 @@ int main(int argc, char* args[])
 	while (game.state != EGameController::QUIT) {
 		//auto generated switch code
 		startLoop = GE::GE_GetTimerTick();
-		
+		game.Update();
 
 		switch (game.state)
 		{
 		case EGameController::START:
 			if(game.screen == NULL){
-				game.screen = new PlayGameScreen();
+				game.screen = new PlayGameScreen(&game.state, game.player);
 			}
 			break;
 		case EGameController::PLAY:
+			cout << "Game Playing" << endl;
 			break;
 		case EGameController::PAUSE:
+			cout << "Game pause" << endl; 
 			break;
 		case EGameController::CHOOSE_SKIN:
+			cout << "Game choose skin" << endl; 
 			break;
 		case EGameController::SETTING:
+			cout << "Game setting" << endl; 
 			break;
 		case EGameController::GAME_OVER:
+			cout << "GAme over" << endl; 
 			break;
 		case EGameController::LEVEL_UP:
+			cout << "Game level_up" << endl;
 			break;
 		case EGameController::QUIT:
+			cout << "GAme quit" << endl;
 			break;
 		default:
 			break;
