@@ -62,7 +62,7 @@ namespace GE {
 			}
 		}
 #ifdef GE_DEBUG
-		cout << "GE_LoadImg failed" << endl;
+		cout << "GE_LoadImg failed : " << file << endl;
 #endif // GE_DEBUG
 
 		return nullptr;

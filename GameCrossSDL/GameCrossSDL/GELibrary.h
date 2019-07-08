@@ -64,7 +64,7 @@ typedef enum EMouseMotion {
 	GE_MOUSEWHEEL,             /**< Mouse wheel motion */
 };
 namespace GE {
-	static int WINDOW_WIDTH = 1200;
+	static int WINDOW_WIDTH = 1100;
 	static int WINDOW_HEIGHT = 800;
 	static SDL_Window* window = NULL;  //Window form
 	static SDL_Renderer* renderer = NULL; // Surface 

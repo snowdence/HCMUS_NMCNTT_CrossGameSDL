@@ -10,28 +10,38 @@
 class GameController
 {
 protected:
-	
 
 public:
 	PlayerEntity* player;
 
 	EGameController state = EGameController::START;
 	ScreenController* screen = nullptr;
+	
 	GameController() {
 		//init();
 	}
 	~GameController() {
-		delete[] player;
+		
 		delete[] screen;
+	}
+	void initGame() {
+		state = EGameController::PLAY;
+		player = new PlayerEntity();
 	}
 	void playGame() {
 		//cout << "Play Game" << endl;
 		if(screen == nullptr){
-			screen = new PlayGameScreen();
+			screen = new PlayGameScreen(player,&state);
+		}
+	}
+	void Update() {
+		if(screen!= nullptr){
+			screen->update();
 		}
 	}
 	void RenderScreen() {
 		screen->Render();
+		player->Render();
 	}
 	void onClickEventListener() {
 		for (int i = 0; i < screen->listOnClickListener.size(); i++)

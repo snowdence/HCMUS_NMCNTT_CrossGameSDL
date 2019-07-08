@@ -3,6 +3,7 @@
 #include "GC_Button.h"
 #include "GameController.h"
 #include "PlayGameScreen.h"
+#include <ctime>
 #define GAME_FPS 60
 
 const int delay = 1000 / GAME_FPS;
@@ -11,7 +12,6 @@ using namespace std;
 
 GE_RGB window_rgb;
 GE_Rect window_rect; 
-
 
 GameController game;
 
@@ -24,18 +24,17 @@ int main(int argc, char* args[])
 		cout << "init ok" << endl;
 	}
 	window_rgb = { 255,255,255 };
-	GE::WINDOW_WIDTH = 1200;
-	GE::WINDOW_HEIGHT = 640;
+	
 	window_rect = { SDL_WINDOWPOS_UNDEFINED , SDL_WINDOWPOS_UNDEFINED , GE::WINDOW_WIDTH ,GE::WINDOW_HEIGHT };
 	GE::GE_CreateWindow("Game crossing Snowdence", window_rect, window_rgb, 0); 
 	
-	srand(time(NULL));
-	game.state = EGameController::PLAY;
+	game.initGame();
+
 	while (game.state != EGameController::QUIT) {
 		//auto generated switch code
 		startLoop = GE::GE_GetTimerTick();
 		
-
+		
 		switch (game.state)
 		{	
 		case EGameController::PLAY:
@@ -45,6 +44,9 @@ int main(int argc, char* args[])
 		default:
 			break;
 		}
+		game.Update();
+
+		game.RenderScreen();
 
 		if (SDL_PollEvent(&GE::event)) {
 			if (SDL_QUIT == GE::event.type) {
@@ -58,7 +60,6 @@ int main(int argc, char* args[])
 			}
 		}
 		
-		game.RenderScreen();
 		endLoop = GE::GE_GetTimerTick() - startLoop;
 		if (endLoop < delay) {
 			GE::G_Delay(delay - endLoop);
