@@ -24,7 +24,7 @@ protected:
 	//Constants
 	const int TILE_LENGTH = 100;
 	const int playerMoveSpeed = 10;
-	const int maxTreesInARow = 2; //Choose it carefully! if it be great enough , Player stuck in trees!!!!
+	const int maxTreesInARow = 2; 
 	const int maxSticksInARow = 3;
 	const int minSticksInARow = 2;
 	const int maxCoinsInARow = 2;
