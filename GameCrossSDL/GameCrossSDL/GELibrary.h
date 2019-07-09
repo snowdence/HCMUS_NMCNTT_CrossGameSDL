@@ -97,6 +97,10 @@ namespace GE {
 
 	SDL_Point getMousePosition();
 
+	TTF_Font* GE_OpenFont(const char* file, int fontSize);
+
+	SDL_Texture* GE_LoadFont(GE_Font* font, const char* title, Uint8 r, Uint8 g, Uint8 b);
+
 	
 
 }

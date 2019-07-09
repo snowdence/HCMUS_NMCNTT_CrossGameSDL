@@ -109,4 +109,24 @@ namespace GE {
 		SDL_Point mouse_point = { GE_Motion.x , GE_Motion.y };
 		return mouse_point;
 	}
+
+
+	//font
+	TTF_Font* GE_OpenFont(const char* file, int fontSize)
+	{
+		return TTF_OpenFont(file, fontSize);
+	}
+	SDL_Texture* GE_LoadFont(GE_Font* font, const  char* title, Uint8 r, Uint8 g, Uint8 b)
+	{
+		SDL_Color color;
+		color.r = r;
+		color.g = g;
+		color.b = b;
+		color.a = 255;
+		SDL_Surface* surface = TTF_RenderText_Solid(font, title, color);
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+		SDL_FreeSurface(surface);
+		return texture;
+	}
+
 }
