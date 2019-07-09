@@ -25,9 +25,7 @@ public:
 	virtual void handleMove() {
 
 	}
-	virtual void update() {
-
-	}
+	virtual void Update() = 0;
 	void addBackGround(const char *path) {
 		background = new GameComponent();
 		background->texture = GE::GE_LoadImage(path);

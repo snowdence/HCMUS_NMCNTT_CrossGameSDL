@@ -30,42 +30,14 @@ int main(int argc, char* args[])
 	
 	game.initGame();
 
-	while (game.state != EGameController::QUIT) {
-		//auto generated switch code
+	while (game.isQuit() == false) {
 		startLoop = GE::GE_GetTimerTick();
-		
-		
-		switch (game.state)
-		{	
-		case EGameController::PLAY:
-			game.playGame();
-			game.onHandleMove();
-			break;
-		case EGameController::GAME_OVER:
-			game.gameOVer();
-#ifdef GE_DEBUG
-			cout << "DEBUG GAME_OVEr" << endl;
-#endif
-			break;
-		default:
-			break;
-		}
-
+		game.handleScreen();
 		game.Update();
+		game.onHandleMove();
+		game.onHandleEvent();
 
-		game.RenderScreen();
-
-		if (SDL_PollEvent(&GE::event)) {
-			if (SDL_QUIT == GE::event.type) {
-				game.state = EGameController::QUIT;
-				break;
-			}
-			else if (GE::event.type == GE_MOUSEBUTTONDOWN) {
-				
-				cout << "Button LEFT x="<< GE_Motion.x << "y=" << GE_Motion.y << endl;
-				game.onClickEventListener();
-			}
-		}
+		game.Render();
 	
 		endLoop = GE::GE_GetTimerTick() - startLoop;
 		if (endLoop < delay) {

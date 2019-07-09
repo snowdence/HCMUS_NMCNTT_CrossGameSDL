@@ -621,12 +621,12 @@ public:
 	void handleMove() {
 		map->HandleMove();
 	}
-	void update() {
-
+	void Update() {
 		map->update();
 	}
 	void Render() {
 		map->draw();
+		this->player->Render();
 	}
 protected:
 };

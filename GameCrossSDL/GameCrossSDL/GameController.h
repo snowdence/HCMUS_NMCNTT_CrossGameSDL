@@ -10,57 +10,90 @@
 class GameController
 {
 protected:
+	ScreenController* screen;
 
-public:
+	EGameController state = EGameController::PLAY;
+	EGameController _prestate = state;
 	PlayerEntity* player;
 
-	EGameController state = EGameController::START;
-	ScreenController* screen = nullptr;
-	GE_Font* font;
-	GameController() {
-		//init();
-	}
-	~GameController() {
-		
-		delete[] screen;
-	}
+	bool quit = false;
+public:
+	bool fChangeState = false;
 	void initGame() {
-		state = EGameController::PLAY;
 		player = new PlayerEntity();
+		screen = new PlayGameScreen(player, &state);
 	}
-	void playGame() {
-		//cout << "Play Game" << endl;
-		if(screen == nullptr){
-			screen = new PlayGameScreen(player,&state);
+	EGameController getState() {
+		return state;
+	}
+
+	bool isQuit() {
+		return quit;
+	}
+
+	void handleScreen()
+	{
+		if (_prestate == state) {
+		}
+		else {
+			switch (state)
+			{
+			case EGameController::PLAY:
+				screen = new PlayGameScreen(player, &state);
+				//game.playGame();
+				//game.onHandleMove();
+				break;
+			case EGameController::GAME_OVER:
+				screen = new GameOverScreen();
+#ifdef GE_DEBUG
+				cout << "DEBUG GAME_OVEr" << endl;
+#endif
+				break;
+			default:
+				break;
+			}
+			_prestate = state;
 		}
 	}
-	void gameOVer() {
-		if (screen != nullptr) {
-			screen = new GameOverScreen();
+
+
+	void onHandleEvent() {
+		if (SDL_PollEvent(&GE::event)) {
+			if (SDL_QUIT == GE::event.type) {
+				cout << "quit" << endl;
+				quit = true;
+			}
+			else if (GE::event.type == GE_MOUSEBUTTONDOWN) {
+
+				cout << "Button LEFT x=" << GE_Motion.x << "y=" << GE_Motion.y << endl;
+				onClickEventListener();
+			}
 		}
-	}
-	void Update() {
-		if(screen!= nullptr){
-			screen->update();
-		}
-	}
-	void RenderScreen() {
-		screen->Render();
-		player->Render();
 	}
 	void onHandleMove() {
 		screen->handleMove();
 	}
+
+	void Update() {
+		if (screen != nullptr) {
+			screen->Update();
+		}
+	}
+	void Render() {
+		if (screen != nullptr) {
+			screen->Render();
+		}
+	}
 	void onClickEventListener() {
-		for (int i = 0; i < screen->listOnClickListener.size(); i++)
+		/*for (int i = 0; i < screen->listOnClickListener.size(); i++)
 		{
 			if (clickOnButton(&screen->listOnClickListener[i]->rect) == true) {
 				screen->listOnClickListener[i]->OnClick();
 			}
-		}
+		}*/
 	}
 protected:
-	
+
 	bool clickOnButton(GE_Rect* r) {
 		SDL_Point mouse_point = { GE_Motion.x , GE_Motion.y };
 		int cur_event = GE::getCurrentEvent();

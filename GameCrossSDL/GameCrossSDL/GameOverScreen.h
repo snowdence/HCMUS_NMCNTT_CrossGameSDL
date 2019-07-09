@@ -14,10 +14,11 @@ public:
 		text.rect = { 300,100 ,500 , 200 };
 		
 	}
+	void Update() {
+
+	}
 	void Render() {
 		GE::GE_RenderCopy(text.texture, &text.rect);
-
-
 	}
 protected:
 };
