@@ -26,24 +26,24 @@ int main(int argc, char* args[])
 	window_rgb = { 255,255,255 };
 	
 	window_rect = { SDL_WINDOWPOS_UNDEFINED , SDL_WINDOWPOS_UNDEFINED , GE::WINDOW_WIDTH ,GE::WINDOW_HEIGHT };
-	GE::GE_CreateWindow("Game crossing Snowdence", window_rect, window_rgb, 0); 
+	GE::GE_CreateWindow("Game crossing - Group 4 CLC1 - k18", window_rect, window_rgb, 0); 
 	
 	game.initGame();
 
 	while (game.isQuit() == false) {
 		startLoop = GE::GE_GetTimerTick();
+
 		game.handleScreen();
 		game.Update();
 		game.onHandleMove();
 		game.onHandleEvent();
-
 		game.Render();
 	
 		endLoop = GE::GE_GetTimerTick() - startLoop;
 		if (endLoop < delay) {
 			GE::G_Delay(delay - endLoop);
 		}
-		
+
 		GE::GE_Update();
 	}
 	GE::GE_Destroy();
