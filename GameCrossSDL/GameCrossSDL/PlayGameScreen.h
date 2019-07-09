@@ -42,7 +42,7 @@ protected:
 	char chars[10] = ""; //Used in updateScore();
 	bool eagleIntersection = false;
 
-	GE_Rect realPlayerClip = { 30,0,40,100 };
+	GE_Rect realPlayerClip = { 20,0,40,100 };
 	Tile grassTile, treeTile, waterTile, roadTile, railTile;
 	deque<GameEntity> objects;
 
@@ -51,15 +51,17 @@ protected:
 	GE_Texture* car2Texture;
 	GE_Texture* car3Texture;
 	GE_Texture* redLampTexture;
-
-	GameEntity* Player;
+	PlayerEntity* Player;
 #pragma endregion
 
 public:
 	EGameController* state;
-	MapBuilder(PlayerEntity *player) {
+	
+	GE_Font* font;
+	MapBuilder(PlayerEntity* player) {
 		this->Player = player;
 		this->load();
+	
 	}
 
 
@@ -135,9 +137,9 @@ public:
 			for (int i = 0; i < objects.size(); i++)
 				objects[i].point.y += 1;
 			addObjects(0);
-			//Player->point.y += 1;
+			Player->point.y += 1;
 		}
-		//Player->rect.y += cameraSpeed;
+		Player->rect.y += cameraSpeed;
 
 		checkPlayerStatus();
 	}
@@ -153,8 +155,12 @@ public:
 			return;
 		}
 
-		if (Player->rect.x <= -TILE_LENGTH || Player->rect.x >= GE::WINDOW_WIDTH)
-			*state = EGameController::GAME_OVER;
+		if (Player->rect.x <= -TILE_LENGTH || Player->rect.x >= GE::WINDOW_WIDTH){
+#ifdef GE_DEBUG
+			cout << "Out of border window" << endl;
+#endif
+			* state = EGameController::GAME_OVER;
+		}
 
 		bool onStick = false;
 		GE_Rect temp = { Player->rect.x + realPlayerClip.x + 5 , Player->rect.y + realPlayerClip.y + 5 , realPlayerClip.w - 5,realPlayerClip.h - 5 };
@@ -162,7 +168,11 @@ public:
 			if (SDL_HasIntersection(&temp, &objects[i].rect) == SDL_TRUE) {
 				if (objects[i].type == CAR || objects[i].type == TRAIN) {
 					*state = EGameController::GAME_OVER;
-					//G_PlaySound(Player->sound, 0);
+			
+#ifdef GE_DEBUG
+					cout << "Train or Car collision" << endl;
+#endif // GE_DEBUG
+
 				}
 				else if (objects[i].type == STICK) {
 					onStick = true;
@@ -170,7 +180,13 @@ public:
 						if (objects[i].isMoving) Player->rect.x += objects[i].moveSpeed;
 						if (Player->rect.x >= map[Player->point.x][0].rect.x + TILE_LENGTH) Player->point.x++;
 						else if (Player->rect.x <= map[Player->point.x][0].rect.x - TILE_LENGTH) Player->point.x--;
-						if (Player->point.x >= columns || Player->point.x < 0) *state = EGameController::GAME_OVER;
+						if (Player->point.x >= columns || Player->point.x < 0) { 
+#ifdef GE_DEBUG
+							cout << "Stick drop out" << endl;
+#endif // GE_DEBUG
+
+							*state = EGameController::GAME_OVER;
+						}
 					}
 				}
 				else if (objects[i].type == COIN) {
@@ -184,7 +200,13 @@ public:
 			}
 		}
 		if (!Player->isMoving && !onStick && map[Player->point.x][Player->point.y].type == WATER)
-			*state = EGameController::GAME_OVER;
+		{
+#ifdef GE_DEBUG
+			cout << "Water drop out " << endl;
+#endif // DEBUG
+
+			* state = EGameController::GAME_OVER;
+		}
 	}
 
 	void adjustCameraSpeed()
@@ -217,7 +239,7 @@ public:
 
 		srand(time(NULL));
 		columns = ceil(GE::WINDOW_WIDTH / TILE_LENGTH);
-		rows = ceil(GE::WINDOW_HEIGHT / TILE_LENGTH) +1;
+		rows = ceil(GE::WINDOW_HEIGHT / TILE_LENGTH) + 1;
 		map = new Tile * [columns];
 		for (int i = 0; i < columns; i++)
 			map[i] = new Tile[rows];
@@ -417,7 +439,7 @@ public:
 	void draw()
 	{
 		drawTiles();
-		
+
 		drawObjects();
 	}
 
@@ -497,13 +519,90 @@ public:
 
 		initTiles();
 
-		
-		
+
+
 		Player->point = { columns / 2 , rows - 2 };
 		Player->rect = map[Player->point.x][Player->point.y].rect;
 		Player->type = PLAYER;
 
-	
+
+	}
+
+	void HandleMove() {
+		if (Player->isMoving) {
+			switch (Player->direction)
+			{
+			case UP:
+				Player->rect.y -= playerMoveSpeed;
+				if (Player->rect.y <= map[Player->point.x][Player->point.y - 1].rect.y) {
+					Player->isMoving = false;
+					score++;
+					Player->point.y--;
+					Player->rect.y = map[Player->point.x][Player->point.y].rect.y;
+					//Player->rect.x = map[Player->point.x][Player->point.y].rect.x;
+				}
+				break;
+			case RIGHT:
+				Player->rect.x += playerMoveSpeed;
+				if (Player->rect.x >= map[Player->point.x + 1][Player->point.y].rect.x) {
+					Player->isMoving = false;
+					Player->point.x++;
+					Player->rect.x = map[Player->point.x][Player->point.y].rect.x;
+				}
+				break;
+			case LEFT:
+				Player->rect.x -= playerMoveSpeed;
+				if (Player->rect.x <= map[Player->point.x - 1][Player->point.y].rect.x) {
+					Player->isMoving = false;
+					Player->point.x--;
+					Player->rect.x = map[Player->point.x][Player->point.y].rect.x;
+				}
+				break;
+			case DOWN:
+				Player->rect.y += playerMoveSpeed;
+				if (Player->rect.y >= map[Player->point.x][Player->point.y + 1].rect.y) {
+					Player->isMoving = false;
+					score--;
+					Player->point.y++;
+					Player->rect.y = map[Player->point.x][Player->point.y].rect.y;
+				}
+				break;
+			}
+		}
+
+		if (GE::event.type == GE_KEYDOWN && !Player->isMoving) {
+			switch (GE_Keyboard) {
+			case GEK_UP:
+				if (map[Player->point.x][Player->point.y - 1].type != TREE) {
+					Player->isMoving = true;
+					Player->direction = UP;
+					//Player->rect.y -= playerMoveSpeed;
+				}
+				break;
+			case GEK_RIGHT:
+				if (Player->point.x + 1 < columns && map[Player->point.x + 1][Player->point.y].type != TREE) {
+					Player->isMoving = true;
+					Player->direction = RIGHT;
+					//Player->rect.x += playerMoveSpeed;
+				}
+				break;
+			case GEK_LEFT:
+				if (Player->point.x - 1 >= 0 && map[Player->point.x - 1][Player->point.y].type != TREE) {
+					Player->isMoving = true;
+					Player->direction = LEFT;
+					//Player->rect.x -= playerMoveSpeed;
+				}
+				break;
+			case GEK_DOWN:
+				if (Player->point.y + 1 < rows && map[Player->point.x][Player->point.y + 1].type != TREE) {
+					Player->isMoving = true;
+					Player->direction = DOWN;
+					//Player->rect.y += playerMoveSpeed;
+				}
+				break;
+			}
+		}
+
 	}
 };
 class PlayGameScreen : public ScreenController {
@@ -512,14 +611,18 @@ public:
 	EGameController* state;
 	MapBuilder* map;
 
-	PlayGameScreen(PlayerEntity* _player, EGameController *_state) {
+	PlayGameScreen(PlayerEntity* _player, EGameController* _state) {
 		this->player = _player;
 		this->state = _state;
-		
+
 		map = new MapBuilder(_player);
 		map->state = _state;
 	}
+	void handleMove() {
+		map->HandleMove();
+	}
 	void update() {
+
 		map->update();
 	}
 	void Render() {

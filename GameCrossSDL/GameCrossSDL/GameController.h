@@ -1,5 +1,5 @@
 #pragma once
-
+#include "GameOverScreen.h"
 #include "GELibrary.h" 
 #include "GameObject.h"
 #include <vector>
@@ -16,7 +16,7 @@ public:
 
 	EGameController state = EGameController::START;
 	ScreenController* screen = nullptr;
-	
+	GE_Font* font;
 	GameController() {
 		//init();
 	}
@@ -34,6 +34,11 @@ public:
 			screen = new PlayGameScreen(player,&state);
 		}
 	}
+	void gameOVer() {
+		if (screen != nullptr) {
+			screen = new GameOverScreen();
+		}
+	}
 	void Update() {
 		if(screen!= nullptr){
 			screen->update();
@@ -42,6 +47,9 @@ public:
 	void RenderScreen() {
 		screen->Render();
 		player->Render();
+	}
+	void onHandleMove() {
+		screen->handleMove();
 	}
 	void onClickEventListener() {
 		for (int i = 0; i < screen->listOnClickListener.size(); i++)

@@ -131,6 +131,7 @@
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameOverScreen.cpp" />
     <ClCompile Include="GC_Button.cpp" />
     <ClCompile Include="GELibrary.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameOverScreen.h" />
     <ClInclude Include="GC_Button.h" />
     <ClInclude Include="GELibrary.h" />
     <ClInclude Include="PlayerEntity.h" />

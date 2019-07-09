@@ -18,9 +18,12 @@ public:
 		state = _state;
 	}
 	~ScreenController() {
-		if (background != nullptr) {
+		/*if (background != nullptr) {
 			delete[] background;
-		}
+		}*/
+	}
+	virtual void handleMove() {
+
 	}
 	virtual void update() {
 

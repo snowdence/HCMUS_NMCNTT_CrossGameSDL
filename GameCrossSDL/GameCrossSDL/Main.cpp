@@ -39,11 +39,18 @@ int main(int argc, char* args[])
 		{	
 		case EGameController::PLAY:
 			game.playGame();
-			
+			game.onHandleMove();
+			break;
+		case EGameController::GAME_OVER:
+			game.gameOVer();
+#ifdef GE_DEBUG
+			cout << "DEBUG GAME_OVEr" << endl;
+#endif
 			break;
 		default:
 			break;
 		}
+
 		game.Update();
 
 		game.RenderScreen();
@@ -59,7 +66,7 @@ int main(int argc, char* args[])
 				game.onClickEventListener();
 			}
 		}
-		
+	
 		endLoop = GE::GE_GetTimerTick() - startLoop;
 		if (endLoop < delay) {
 			GE::G_Delay(delay - endLoop);

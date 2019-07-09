@@ -1,153 +1,81 @@
-
-void update()
-{
-	adjustCameraSpeed();
-
-	for (int y = 0; y < rows; y++)
-		for (int x = 0; x < columns; x++)
-			map[x][y].rect.y += cameraSpeed;
-
-	for (int i = 0; i < objects.size(); i++) {
-		objects[i].rect.y += cameraSpeed;
-		if (objects[i].type == CAR) {
-			if (objects[i].direction == LEFT && objects[i].rect.x < -Car.rect.w) {
-				objects[i].rect.x = GE::WINDOW_WIDTH;
-			}
-			else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH) {
-				objects[i].rect.x = -Car.rect.w;
+void HandleMove() {
+		if (Player->isMoving) {
+			switch (Player->dir)
+			{
+			case UP:
+				Player->rect.y -= playerMoveSpeed;
+				if (Player->rect.y <= map[Player->point.x][Player->point.y - 1].rect.y) {
+					Player->isMoving = false;
+					score++;
+					Player->point.y--;
+					Player->rect.y = map[Player->point.x][Player->point.y].rect.y;
+					//Player->rect.x = map[Player->point.x][Player->point.y].rect.x;
+					if (map[Player->point.x][Player->point.y].type == ROAD) G_PlaySound(Car.sound, 0);
+					else if (map[Player->point.x][Player->point.y].type == WATER) G_PlaySound(Stick.sound, 0);
+				}
+				break;
+			case RIGHT:
+				Player->rect.x += playerMoveSpeed;
+				if (Player->rect.x >= map[Player->point.x + 1][Player->point.y].rect.x) {
+					Player->isMoving = false;
+					Player->point.x++;
+					Player->rect.x = map[Player->point.x][Player->point.y].rect.x;
+				}
+				break;
+			case LEFT:
+				Player->rect.x -= playerMoveSpeed;
+				if (Player->rect.x <= map[Player->point.x - 1][Player->point.y].rect.x) {
+					Player->isMoving = false;
+					Player->point.x--;
+					Player->rect.x = map[Player->point.x][Player->point.y].rect.x;
+				}
+				break;
+			case DOWN:
+				Player->rect.y += playerMoveSpeed;
+				if (Player->rect.y >= map[Player->point.x][Player->point.y + 1].rect.y) {
+					Player->isMoving = false;
+					score--;
+					Player->point.y++;
+					Player->rect.y = map[Player->point.x][Player->point.y].rect.y;
+				}
+				break;
 			}
 		}
 
-		if (objects[i].type == STICK) {
-			if (objects[i].direction == LEFT && objects[i].rect.x < -Stick.rect.w)
-				objects[i].rect.x = GE::WINDOW_WIDTH;
-			else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH)
-				objects[i].rect.x = -Stick.rect.w;
-		}
-
-		if (objects[i].type == TRAIN) {
-			if (objects[i].isMoving) {
-				if (objects[i].direction == LEFT && objects[i].rect.x < -Train.rect.w) {
-					objects[i].rect.x = GE::WINDOW_WIDTH;
-					objects[i].isMoving = false;
-					objects[i + 1].texture = Lamp.texture; // We Are Sure there is a lamp just after a train!!
-					objects[i].timer = ((rand() % 5) + 2) * FPS;
+		if (gameEvent == G_KEYDOWN && !Player->isMoving) {
+			switch (G_Keyboard) {
+			case GK_UP:
+				if (map[Player->point.x][Player->point.y - 1].type != TREE) {
+					Player->isMoving = true;
+					Player->dir = UP;
+					//Player->rect.y -= playerMoveSpeed;
 				}
-				else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH) {
-					objects[i].rect.x = -Train.rect.w;
-					objects[i].isMoving = false;
-					objects[i + 1].texture = Lamp.texture;
-					objects[i].timer = ((rand() % 5) + 2) * FPS;
+				break;
+			case GK_RIGHT:
+				if (Player->point.x + 1 < columns && map[Player->point.x + 1][Player->point.y].type != TREE) {
+					Player->isMoving = true;
+					Player->dir = RIGHT;
+					//Player->rect.x += playerMoveSpeed;
 				}
-			}
-			else {
-				if (objects[i].timer == FPS) {  //1 Second Before it move we should change the lamp!!
-					objects[i + 1].texture = redLampTexture;
-					G_PlaySound(Lamp.sound, 0);
+				break;
+			case GK_LEFT:
+				if (Player->point.x - 1 >= 0 && map[Player->point.x - 1][Player->point.y].type != TREE) {
+					Player->isMoving = true;
+					Player->dir = LEFT;
+					//Player->rect.x -= playerMoveSpeed;
 				}
-				if (objects[i].timer == 0) {
-					objects[i].isMoving = true;
-					G_PlaySound(Train.sound, 0);
+				break;
+			case GK_DOWN:
+				if (Player->point.y + 1 < rows && map[Player->point.x][Player->point.y + 1].type != TREE) {
+					Player->isMoving = true;
+					Player->dir = DOWN;
+					//Player->rect.y += playerMoveSpeed;
 				}
-				else
-					objects[i].timer--;
+				break;
 			}
 		}
-
-		if (objects[i].isMoving ) {
-			if (objects[i].type == TRAIN)
-				objects[i].rect.x += (objects[i].direction == LEFT ? -trainMoveSpeed : trainMoveSpeed);
-			else
-				objects[i].rect.x += objects[i].moveSpeed;
-		}
+		G_Draw(PauseButton.texture, &PauseButton.position);
+		if (clickOnButton(&PauseButton.position))
+			state = PAUSE;
+		updateScore();
 	}
-
-	if (map[0][rows - 1].rect.y > GE::WINDOW_HEIGHT) {
-		for (int y = rows - 1; y > 0; y--)
-			for (int x = 0; x < columns; x++)
-				map[x][y] = map[x][y - 1];
-
-		generateTiles(0);
-		deleteObjects();
-
-		for (int i = 0; i < objects.size(); i++)
-			objects[i].point.y += 1;
-		addObjects(0);
-		Player.point.y += 1;
-	}
-	Player.rect.y += cameraSpeed;
-
-	checkPlayerStatus();
-}
-//enum TileType { GRASS, WATER, ROAD, RAIL, TREE };
-void checkPlayerStatus() {
-	if (state != PLAY) return;
-
-	if (Player.rect.y + 5 >= GE::WINDOW_HEIGHT) {
-		state = OUT;
-		Eagle.rect.x = Player.rect.x - (Eagle.rect.w / 2);
-		Eagle.rect.y = -Eagle.rect.h;
-		eagleIntersection = false;
-		return;
-	}
-
-	if (Player.rect.x <= -TILE_LENGTH || Player.rect.x >= GE::WINDOW_WIDTH)
-		state = GAME_OVER;
-
-	bool onStick = false;
-	G_Rect temp = { Player.rect.x + realPlayerClip.x + 5 , Player.rect.y + realPlayerClip.y + 5 , realPlayerClip.w - 5,realPlayerClip.h - 5 };
-	for (int i = 0; i < objects.size(); i++) {
-		if (SDL_HasIntersection(&temp, &objects[i].position) == SDL_TRUE) {
-			if (objects[i].type == CAR || objects[i].type == TRAIN) {
-				state = GAME_OVER;
-				G_PlaySound(Player.sound, 0);
-			}
-			else if (objects[i].type == STICK) {
-				onStick = true;
-				if (!Player.isMoving) {
-					if (objects[i].isMoving) Player.rect.x += objects[i].moveSpeed;
-					if (Player.rect.x >= map[Player.point.x][0].rect.x + TILE_LENGTH) Player.point.x++;
-					else if (Player.rect.x <= map[Player.point.x][0].rect.x - TILE_LENGTH) Player.point.x--;
-					if (Player.point.x >= columns || Player.point.x < 0) state = GAME_OVER;
-				}
-			}
-			else if (objects[i].type == COIN) {
-				coins++;
-				G_PlaySound(Coin.sound, 0);
-				updateScore();
-				objects.erase(objects.begin() + i);
-				i--;
-				continue;
-			}
-		}
-	}
-	if (!Player.isMoving && !onStick && map[Player.point.x][Player.point.y].type == WATER)
-		state = GAME_OVER;
-}
-
-void adjustCameraSpeed()
-{
-	if (state == OUT) {
-		cameraSpeed = -2;
-		return;
-	}
-	if (state != PLAY) {
-		cameraSpeed = 0;
-		return;
-	}
-	cameraSpeed = cameraBaseSpeed;
-	switch (Player.point.y) {
-	case 4:
-		cameraSpeed += 1;
-		break;
-	case 3:
-		cameraSpeed += 3;
-		break;
-	case 2:
-		cameraSpeed += 6;
-		break;
-	case 1:
-		cameraSpeed = playerMoveSpeed;
-		break;
-	}
-}
