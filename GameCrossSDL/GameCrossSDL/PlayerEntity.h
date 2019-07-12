@@ -9,13 +9,13 @@ private:
 	uint32_t score = 0;
 public:
 	void setScore(int s) {
-		score +=s ;
+		score += s;
 	}
 	void setCoin(int c) {
 		coin += c;
 	}
 	int getScore() {
-		return this->score; 
+		return this->score;
 	}
 	int getCoin() {
 		return this->coin;
@@ -23,6 +23,12 @@ public:
 	PlayerEntity() {
 		this->rect = { 10,10, 100,100 };
 		this->texture = GE::GE_LoadImage("assets/image/player.png");
+	}
+	int getdx() {
+		return this->dx;
+	}
+	int getdy() {
+		return this->dy; 
 	}
 	int playerMoveSpeed = 10;
 	int dx = 10;

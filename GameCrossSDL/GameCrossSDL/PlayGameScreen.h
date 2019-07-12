@@ -21,26 +21,20 @@ struct Tile {
 class MapBuilder {
 protected:
 #pragma region DEFINE Variable
+	int rows, columns; 
+	const int MAX_STICK = 3;
+	const int MIN_STICK = 2;
+	const int MAX_COIN = 2;
 
-	//Constants
 	const int TILE_LENGTH = 100;
-	const int playerMoveSpeed = 10;
-	const int maxTreesInARow = 2; 
-	const int maxSticksInARow = 3;
-	const int minSticksInARow = 2;
-	const int maxCoinsInARow = 2;
+	const int MAX_TREE = 2; 
 	const int FPS = 60;
 	const int delay = 1000 / FPS;
 	const int cameraBaseSpeed = 1;
-	int trainMoveSpeed = 18;
+	int TRAIN_SPEED = 18;
+	
 
-	//Variables
-	int startLoop, endLoop;
 	int cameraSpeed = cameraBaseSpeed;
-	int gameEvent;
-	int rows, columns;
-	int maxScore = 0, score = 0, topScore = 0, coins = 0;
-	char chars[10] = ""; //Used in updateScore();
 	bool eagleIntersection = false;
 
 	GE_Rect realPlayerClip = { 20,0,40,100 };
@@ -49,8 +43,7 @@ protected:
 
 	Tile** map = NULL;
 	GameEntity _Car, Stick, Train, Lamp, Eagle, Coin;
-	GE_Texture* car2Texture;
-	GE_Texture* car3Texture;
+	
 	GE_Texture* redLampTexture;
 	PlayerEntity* Player;
 	CarGameEntity Car;
@@ -126,13 +119,13 @@ public:
 			if (objects[i].isMoving) {
 				objects[i].HandleMove();
 			}
-/*
+
 			if (objects[i].isMoving) {
 				if (objects[i].type == TRAIN)
-					objects[i].rect.x += (objects[i].direction == LEFT ? -trainMoveSpeed : trainMoveSpeed);
+					objects[i].rect.x += (objects[i].direction == LEFT ? -TRAIN_SPEED : TRAIN_SPEED);
 				else
 					objects[i].rect.x += objects[i].moveSpeed;
-			}*/
+			}
 		}
 
 		if (map[0][rows - 1].rect.y > GE::WINDOW_HEIGHT) {
@@ -200,7 +193,7 @@ public:
 					}
 				}
 				else if (objects[i].type == COIN) {
-					coins++;
+					Player->setScore(1); 
 					//G_PlaySound(Coin.sound, 0);
 					//updateScore();
 					Player->setCoin(1); 
@@ -243,7 +236,7 @@ public:
 			cameraSpeed += 6;
 			break;
 		case 1:
-			cameraSpeed = playerMoveSpeed;
+			cameraSpeed = Player->getdx();
 			break;
 		}
 	}
@@ -285,7 +278,7 @@ public:
 				if (x == 0 || x == columns - 1)
 					map[x][row] = treeTile;
 				else {
-					if (chance >= 80 && Trees < maxTreesInARow) {
+					if (chance >= 80 && Trees < MAX_TREE) {
 						map[x][row] = treeTile;
 						Trees++;
 					}
@@ -294,13 +287,13 @@ public:
 					}
 				}
 			}
-			else if (rowChance <= 70 /*rowType == ROAD*/) {
+			else if (rowChance <= 70 ) {
 				map[x][row] = roadTile;
 			}
-			else if (rowChance <= 75 /*rowType == RAIL*/) {
+			else if (rowChance <= 75 ) {
 				map[x][row] = railTile;
 			}
-			else if (rowChance <= 100 /*rowType == WATER*/) {
+			else if (rowChance <= 100) {
 				map[x][row] = waterTile;
 			}
 
@@ -384,14 +377,14 @@ public:
 				{
 					if (map[i][row + 1].type != TREE) {
 						int chance = rand() % 100 + 1;
-						if (chance >= 50 && num < maxSticksInARow) {
+						if (chance >= 50 && num < MAX_STICK) {
 							num++;
 							Stick.rect.x = map[i][row].rect.x;
 							objects.push_back(Stick);
 						}
 					}
 				}
-			} while (num < minSticksInARow);
+			} while (num < MIN_STICK);
 		}
 	}
 
@@ -423,7 +416,7 @@ public:
 		{
 			if (map[i][row].type != TREE) {
 				int chance = rand() % 101;
-				if (chance >= 90 && num < maxCoinsInARow) {
+				if (chance >= 90 && num < MAX_COIN) {
 					num++;
 					Coin.rect.x = map[i][row].rect.x;
 					objects.push_back(Coin);
@@ -536,17 +529,17 @@ public:
 			switch (Player->direction)
 			{
 			case UP:
-				Player->rect.y -= playerMoveSpeed;
+				Player->rect.y -= Player->getdx();
 				if (Player->rect.y <= map[Player->point.x][Player->point.y - 1].rect.y) {
 					Player->isMoving = false;
-					score++;
+					Player->setScore(1);
 					Player->point.y--;
 					Player->rect.y = map[Player->point.x][Player->point.y].rect.y;
 					//Player->rect.x = map[Player->point.x][Player->point.y].rect.x;
 				}
 				break;
 			case RIGHT:
-				Player->rect.x += playerMoveSpeed;
+				Player->rect.x += Player->getdx();
 				if (Player->rect.x >= map[Player->point.x + 1][Player->point.y].rect.x) {
 					Player->isMoving = false;
 					Player->point.x++;
@@ -554,7 +547,7 @@ public:
 				}
 				break;
 			case LEFT:
-				Player->rect.x -= playerMoveSpeed;
+				Player->rect.x -= Player->getdx();
 				if (Player->rect.x <= map[Player->point.x - 1][Player->point.y].rect.x) {
 					Player->isMoving = false;
 					Player->point.x--;
@@ -562,10 +555,10 @@ public:
 				}
 				break;
 			case DOWN:
-				Player->rect.y += playerMoveSpeed;
+				Player->rect.y += Player->getdx();
 				if (Player->rect.y >= map[Player->point.x][Player->point.y + 1].rect.y) {
 					Player->isMoving = false;
-					score--;
+					Player->setScore(1);
 					Player->point.y++;
 					Player->rect.y = map[Player->point.x][Player->point.y].rect.y;
 				}
@@ -579,28 +572,28 @@ public:
 				if (map[Player->point.x][Player->point.y - 1].type != TREE) {
 					Player->isMoving = true;
 					Player->direction = UP;
-					//Player->rect.y -= playerMoveSpeed;
+					//Player->rect.y -= Player->getdx();
 				}
 				break;
 			case GEK_RIGHT:
 				if (Player->point.x + 1 < columns && map[Player->point.x + 1][Player->point.y].type != TREE) {
 					Player->isMoving = true;
 					Player->direction = RIGHT;
-					//Player->rect.x += playerMoveSpeed;
+					//Player->rect.x += Player->getdx();
 				}
 				break;
 			case GEK_LEFT:
 				if (Player->point.x - 1 >= 0 && map[Player->point.x - 1][Player->point.y].type != TREE) {
 					Player->isMoving = true;
 					Player->direction = LEFT;
-					//Player->rect.x -= playerMoveSpeed;
+					//Player->rect.x -= Player->getdx();
 				}
 				break;
 			case GEK_DOWN:
 				if (Player->point.y + 1 < rows && map[Player->point.x][Player->point.y + 1].type != TREE) {
 					Player->isMoving = true;
 					Player->direction = DOWN;
-					//Player->rect.y += playerMoveSpeed;
+					//Player->rect.y += Player->getdx();
 				}
 				break;
 			}
