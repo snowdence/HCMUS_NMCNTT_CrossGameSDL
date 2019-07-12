@@ -7,9 +7,6 @@ public:
 
 	GE_Texture* texture; // text/img/... skin of this obj
 	GE_Rect rect; // rect 
-	GameObject() {
-
-	}
 	
 	
 	virtual void Render() {

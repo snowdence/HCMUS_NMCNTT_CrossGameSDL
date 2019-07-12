@@ -6,7 +6,5 @@ class GameComponent :
 protected:
 public:
 	
-	
-	
 };
 
