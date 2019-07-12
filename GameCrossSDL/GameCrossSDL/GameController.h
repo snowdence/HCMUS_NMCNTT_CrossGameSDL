@@ -1,4 +1,5 @@
 #pragma once
+#include "GamePauseScreen.h"
 #include "GameOverScreen.h"
 #include "GELibrary.h" 
 #include "GameObject.h"
@@ -46,8 +47,11 @@ public:
 			case EGameController::GAME_OVER:
 				screen = new GameOverScreen();
 #ifdef GE_DEBUG
-				cout << "DEBUG GAME_OVEr" << endl;
+				cout << "DEBUG GAME_OVER" << endl;
 #endif
+				break;
+			case EGameController::PAUSE:
+				screen = new GamePauseScreen();
 				break;
 			default:
 				break;

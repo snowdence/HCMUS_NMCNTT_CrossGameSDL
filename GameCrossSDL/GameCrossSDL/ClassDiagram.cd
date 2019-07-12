@@ -1,161 +1,189 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Class Name="GameComponent">
-    <Position X="0.5" Y="2" Width="1.25" />
+    <Position X="0.5" Y="10.25" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameComponent.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameController" Collapsed="true">
-    <Position X="6" Y="0.75" Width="1.25" />
+    <Position X="9.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAABAABAAAAAAAAAQEAAAAACIFABMAAAAAAAA=</HashCode>
+      <HashCode>QAQCAAAAAAAAAAAAAAEAAAQAAEAAACBFABERCAAAAAA=</HashCode>
       <FileName>GameController.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEntity">
-    <Position X="2.75" Y="2" Width="1.25" />
+    <Position X="3.75" Y="10.25" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAACAAAAAIAAAAAAAAAAAAAAFAAAAAAABAAAAAAA=</HashCode>
+      <HashCode>AAAAAACAAAABIAAQAAAAAAAAAAAFAAAAAAAJAAAAAAA=</HashCode>
       <FileName>GameEntity.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="GameObject" Collapsed="true">
-    <Position X="1.75" Y="0.75" Width="1.25" />
+  <Class Name="GameObject">
+    <Position X="2.75" Y="7.5" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAEAAAAAAAAAAIAACAAAAAAAAABAAAAIAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAACAAAAAgAAABAAAAAAAAA=</HashCode>
       <FileName>GameObject.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GC_Button">
-    <Position X="0.5" Y="3.5" Width="1.25" />
+    <Position X="0.5" Y="12" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
       <FileName>GC_Button.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ScreenController">
-    <Position X="13.25" Y="3" Width="1.25" />
+    <Position X="4" Y="0.5" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AAAQAAIAAAAAAAAIAAAAAAAAAAABAAAEABAAAAEEIAA=</HashCode>
+      <HashCode>AAQQAAIAAAAAAAAIAAAAEAAAAAABAAAEABAAAAEAIAA=</HashCode>
       <FileName>ScreenController.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="StartGameScreen">
-    <Position X="9.75" Y="0.75" Width="1.25" />
+    <Position X="3" Y="4.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAIgAIAA=</HashCode>
       <FileName>StartGameScreen.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PlayerEntity" Collapsed="true">
-    <Position X="0.5" Y="1" Width="1.25" />
+  <Class Name="PlayerEntity">
+    <Position X="2.5" Y="13.75" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAAAAAAIAABAAAUAAAAAAAAAAAAABAA=</HashCode>
+      <HashCode>AAQABEAAAAAAAAAAAAAIAABAAAUACACAAAAAAAAABAA=</HashCode>
       <FileName>PlayerEntity.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="PlayGameScreen">
-    <Position X="4.25" Y="1" Width="1.25" />
+    <Position X="7.25" Y="4.5" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AQQhGEgAAKQBAAAwAAZAAgFEwQAABKEgSHUAgUAEAAA=</HashCode>
+      <HashCode>AAQAEAAAAAQAAAAAAAAAEAAAAAAAAAAFABAAAAAAAAA=</HashCode>
       <FileName>PlayGameScreen.h</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="GameOverScreen" Collapsed="true">
+    <Position X="0.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAIAAAAAAAAAAAAAAAAAAAAAAAAAAIABAAAAAAAAA=</HashCode>
+      <FileName>GameOverScreen.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GamePauseScreen" Collapsed="true">
+    <Position X="5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCAAAAAIAA=</HashCode>
+      <FileName>GamePauseScreen.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapBuilder" Collapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQYhGEgASKQBABA4QIZIBglVwQAABKklSGUAgUgEAAQ=</HashCode>
+      <FileName>PlayGameScreen.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarGameEntity">
+    <Position X="4.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAACAgAAAAEAAAAAAAAAAAAAABIAAAAAAA=</HashCode>
+      <FileName>CarGameEntity.h</FileName>
+    </TypeIdentifier>
+  </Class>
   <Struct Name="GE_RGB" Collapsed="true">
-    <Position X="6" Y="2" Width="1.25" />
+    <Position X="9.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAQABAAAAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Tile" Collapsed="true">
-    <Position X="14.5" Y="0.75" Width="1.25" />
+    <Position X="11.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAgAAAAAAAAAAAAA=</HashCode>
       <FileName>PlayGameScreen.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Typedef Name="GE_Rect" Collapsed="true">
-    <Position X="6" Y="4.25" Width="1.25" />
+    <Position X="13" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="GE_Texture" Collapsed="true">
-    <Position X="7.75" Y="4.25" Width="1.25" />
+    <Position X="11.25" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="GE_Font" Collapsed="true">
-    <Position X="14.5" Y="3.75" Width="1.25" />
+    <Position X="9.5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="GE_Music" Collapsed="true">
-    <Position X="16.25" Y="3.75" Width="1.25" />
+    <Position X="11.25" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="GE_Sound" Collapsed="true">
-    <Position X="18" Y="3.75" Width="1.25" />
+    <Position X="9.5" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Enum Name="EGameController" Collapsed="true">
-    <Position X="9.5" Y="5.25" Width="1.25" />
+    <Position X="13" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAABAIACAAAACAAAACAAAAAQAAAAAAAABAAgAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="EMouseMotion">
-    <Position X="11.25" Y="3.25" Width="1.25" />
+  <Enum Name="EMouseMotion" Collapsed="true">
+    <Position X="11.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgQAAAAAAQEAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="ObjectType" Collapsed="true">
-    <Position X="14.5" Y="2.75" Width="1.25" />
+    <Position X="13" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAUAgAAAAACAAAAAAAAAACgAAAAAAAAAAAA=</HashCode>
       <FileName>GameEntity.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="EKeyboardMotion" Collapsed="true">
-    <Position X="18" Y="2" Width="1.25" />
+    <Position X="9.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAgAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAACAAAABA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="Direction" Collapsed="true">
-    <Position X="16.25" Y="2" Width="1.25" />
+    <Position X="11.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAICAAAgAAAAAAAAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="__unnamed_enum_000c_1" Collapsed="true">
-    <Position X="14.5" Y="2" Width="1.25" />
+  <Enum Name="__unnamed_enum_000e_1" Collapsed="true">
+    <Position X="9.5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAgQAAAAABAAAAA=</HashCode>
       <FileName>GELibrary.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="TileType" Collapsed="true">
-    <Position X="16.25" Y="2.75" Width="1.25" />
+    <Position X="9.5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAoAAAAAAAACCAAAAAAAAAAAAAAAACAAAAA=</HashCode>
       <FileName>PlayGameScreen.h</FileName>

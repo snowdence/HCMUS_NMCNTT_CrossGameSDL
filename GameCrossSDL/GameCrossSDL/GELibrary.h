@@ -1,5 +1,6 @@
 #ifndef GELibrary_H
 #define GELibrary_H
+#define GE_IMAGE_ASSETS "assets/image/"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -82,6 +83,10 @@ namespace GE {
 	void G_Delay(uint32_t s);
 
 	SDL_Texture* GE_LoadImage(const char* file);
+
+	SDL_Texture* GE_LoadImage(string file);
+
+	string GE_GetResourceImage(const char* name);
 
 	void GE_RenderCopy(GE_Texture* texture, GE_Rect* src, GE_Rect* dst, bool fullscreen = false);
 

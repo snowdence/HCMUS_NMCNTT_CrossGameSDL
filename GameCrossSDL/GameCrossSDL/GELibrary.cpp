@@ -67,6 +67,26 @@ namespace GE {
 
 		return nullptr;
 	}
+	SDL_Texture* GE_LoadImage(string file) {
+		SDL_Surface* objSurface = IMG_Load(file.c_str());
+		if (objSurface != NULL) {
+			SDL_Texture* texture = SDL_CreateTextureFromSurface(GE::renderer, objSurface);
+			SDL_FreeSurface(objSurface);
+			if (texture != NULL) {
+				return texture;
+			}
+		}
+#ifdef GE_DEBUG
+		cout << "GE_LoadImg failed : " << file << endl;
+#endif // GE_DEBUG
+
+		return nullptr;
+	}
+	string GE_GetResourceImage(const char* name) {
+		string str = "assets/image/";
+		str += name;
+		return str;
+	}
 	void GE_RenderCopy(GE_Texture* texture, GE_Rect* src, GE_Rect* dst, bool fullscreen)
 	{
 		if (!fullscreen)

@@ -6,7 +6,17 @@ class GameEntity :
 	public GameObject
 {
 protected:
+	
 public:
+	virtual void HandleOutBorder() {
+	
+	};
+	virtual void HandleMove() {
+		this->rect.x += moveSpeed;
+	}
+	virtual void RandomProperty() {
+		
+	}
 	SDL_Point point;
 	GE_Sound* sound = NULL;
 	bool isMoving = false;

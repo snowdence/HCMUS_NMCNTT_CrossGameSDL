@@ -6,6 +6,7 @@
 #include "PlayerEntity.h"
 #include <deque>
 #include <ctime>
+#include "CarGameEntity.h"
 using namespace std;
 
 enum TileType { GRASS, WATER, ROAD, RAIL, TREE };
@@ -47,11 +48,12 @@ protected:
 	deque<GameEntity> objects;
 
 	Tile** map = NULL;
-	GameEntity Car, Stick, Train, Lamp, Eagle, Coin;
+	GameEntity _Car, Stick, Train, Lamp, Eagle, Coin;
 	GE_Texture* car2Texture;
 	GE_Texture* car3Texture;
 	GE_Texture* redLampTexture;
 	PlayerEntity* Player;
+	CarGameEntity Car;
 #pragma endregion
 
 public:
@@ -69,20 +71,24 @@ public:
 	{
 		adjustCameraSpeed();
 
+		//update all
 		for (int y = 0; y < rows; y++)
 			for (int x = 0; x < columns; x++)
 				map[x][y].rect.y += cameraSpeed;
 
 		for (int i = 0; i < objects.size(); i++) {
 			objects[i].rect.y += cameraSpeed;
-			if (objects[i].type == CAR) {
+			if (objects[i].type == CAR){
+				objects[i].HandleOutBorder();
+			}
+			/*if (objects[i].type == CAR) {
 				if (objects[i].direction == LEFT && objects[i].rect.x < -Car.rect.w) {
 					objects[i].rect.x = GE::WINDOW_WIDTH;
 				}
 				else if (objects[i].direction == RIGHT && objects[i].rect.x > GE::WINDOW_WIDTH) {
 					objects[i].rect.x = -Car.rect.w;
 				}
-			}
+			}*/
 
 			if (objects[i].type == STICK) {
 				if (objects[i].direction == LEFT && objects[i].rect.x < -Stick.rect.w)
@@ -117,13 +123,16 @@ public:
 						objects[i].timer--;
 				}
 			}
-
+			if (objects[i].isMoving) {
+				objects[i].HandleMove();
+			}
+/*
 			if (objects[i].isMoving) {
 				if (objects[i].type == TRAIN)
 					objects[i].rect.x += (objects[i].direction == LEFT ? -trainMoveSpeed : trainMoveSpeed);
 				else
 					objects[i].rect.x += objects[i].moveSpeed;
-			}
+			}*/
 		}
 
 		if (map[0][rows - 1].rect.y > GE::WINDOW_HEIGHT) {
@@ -144,6 +153,7 @@ public:
 		checkPlayerStatus();
 	}
 	//enum TileType { GRASS, WATER, ROAD, RAIL, TREE };
+
 	void checkPlayerStatus() {
 		if (*state != EGameController::PLAY) return;
 
@@ -193,6 +203,8 @@ public:
 					coins++;
 					//G_PlaySound(Coin.sound, 0);
 					//updateScore();
+					Player->setCoin(1); 
+					cout << "Coin : " << Player->getCoin() << endl;
 					objects.erase(objects.begin() + i);
 					i--;
 					continue;
@@ -324,21 +336,12 @@ public:
 		int randPos = rand() % GE::WINDOW_WIDTH;
 		for (int i = 0; i < num; i++)
 		{
+			Car.RandomSkin();
 			objects.push_back(Car);
 			if (dir == LEFT)
 				objects.back().rect.x = GE::WINDOW_WIDTH + (i * (space + Car.rect.w)) - randPos;
 			else
 				objects.back().rect.x = -Car.rect.w - (i * (space + Car.rect.w)) + randPos;
-			short int tex = rand() % 3;
-			switch (tex)
-			{
-			case 1:
-				objects.back().texture = car2Texture;
-				break;
-			case 2:
-				objects.back().texture = car3Texture;
-				break;
-			}
 		}
 	}
 	void addStick(int row)
@@ -487,12 +490,12 @@ public:
 		railTile.type = RAIL;
 
 
-		Car.texture = GE::GE_LoadImage("assets/image/car.png");
+		/*Car.texture = GE::GE_LoadImage("assets/image/car.png");
 		Car.rect = { 0,0,169,100 };
 		Car.isMoving = true;
 		Car.type = CAR;
 		car2Texture = GE::GE_LoadImage("assets/image/car2.png");
-		car3Texture = GE::GE_LoadImage("assets/image/car3.png");
+		car3Texture = GE::GE_LoadImage("assets/image/car3.png");*/
 
 		Stick.texture = GE::GE_LoadImage("assets/image/stick1.png");
 		Stick.rect = { 0,0,100,100 };
